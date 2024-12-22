@@ -129,11 +129,13 @@
   <ItemGroup>
     <ClCompile Include="8bit_arithmetic.cpp" />
     <ClCompile Include="cart.cpp" />
+    <ClCompile Include="common.cpp" />
     <ClCompile Include="cpu.cpp" />
     <ClCompile Include="emu.cpp" />
     <ClCompile Include="memory.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="8bit_arithmetic.h" />
     <ClInclude Include="cart.h" />
     <ClInclude Include="common.h" />
     <ClInclude Include="cpu.h" />

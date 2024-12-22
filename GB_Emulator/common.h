@@ -9,3 +9,15 @@ namespace common {
 	const u32 memsize = 0x10000;
 
 }
+
+enum flags
+{
+	Z_FLAG = 7,
+	S_FLAG = 6,
+	H_FLAG = 5,
+	C_FLAG = 4
+};
+
+void u8set_bit(u8 bit,u8* reg, u8 value);
+
+bool u8read_bit(u8 bit, u8* reg);

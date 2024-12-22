@@ -33,6 +33,9 @@
     <ClCompile Include="8bit_arithmetic.cpp">
       <Filter>Source Files\instructions</Filter>
     </ClCompile>
+    <ClCompile Include="common.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cart.h">
@@ -49,6 +52,9 @@
     </ClInclude>
     <ClInclude Include="instruction.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="8bit_arithmetic.h">
+      <Filter>Source Files\instructions</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
