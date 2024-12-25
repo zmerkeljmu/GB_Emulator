@@ -49,15 +49,19 @@ u8 sbchl_9E(Cpu* cpu);
 u8 sbca_9F(Cpu* cpu);
 u8 sbci8_DE(Cpu* cpu);
 
+void and_rtor(Cpu* cpu, u8* reg);
+
 u8 andb_A0(Cpu* cpu);
 u8 andc_A1(Cpu* cpu);
 u8 andd_A2(Cpu* cpu);
 u8 ande_A3(Cpu* cpu);
 u8 andh_A4(Cpu* cpu);
 u8 andl_A5(Cpu* cpu);
-u8 subhl_A6(Cpu* cpu);
+u8 andhl_A6(Cpu* cpu);
 u8 anda_A7(Cpu* cpu);
 u8 andi8_E6(Cpu* cpu);
+
+void xor_rtor(Cpu* cpu, u8* reg);
 
 u8 xorb_A8(Cpu* cpu);
 u8 xorc_A9(Cpu* cpu);
@@ -69,6 +73,8 @@ u8 xorhl_AE(Cpu* cpu);
 u8 xora_AF(Cpu* cpu);
 u8 xori8_EE(Cpu* cpu);
 
+void or_rtor(Cpu* cpu, u8* reg);
+
 u8 orb_B0(Cpu* cpu);
 u8 orc_B1(Cpu* cpu);
 u8 ord_B2(Cpu* cpu);
@@ -79,6 +85,8 @@ u8 orhl_B6(Cpu* cpu);
 u8 ora_B7(Cpu* cpu);
 u8 ori8_F6(Cpu* cpu);
 
+void cp_rtor(Cpu* cpu, u8* reg);
+
 u8 cpb_B8(Cpu* cpu);
 u8 cpc_B9(Cpu* cpu);
 u8 cpd_BA(Cpu* cpu);
@@ -88,3 +96,23 @@ u8 cpl_BD(Cpu* cpu);
 u8 cphl_BE(Cpu* cpu);
 u8 cpa_BF(Cpu* cpu);
 u8 cpi8_FE(Cpu* cpu);
+
+void inc_reg(Cpu* cpu, u8* reg);
+
+u8 incb_04(Cpu* cpu);
+u8 incd_14(Cpu* cpu);
+u8 inch_24(Cpu* cpu);
+u8 inchl_34(Cpu* cpu);
+u8 incc_0C(Cpu* cpu);
+u8 ince_1C(Cpu* cpu);
+u8 incl_2C(Cpu* cpu);
+u8 inca_3C(Cpu* cpu);
+
+u8 decb_05(Cpu* cpu);
+u8 decd_15(Cpu* cpu);
+u8 dech_25(Cpu* cpu);
+u8 dechl_35(Cpu* cpu);
+u8 decc_0D(Cpu* cpu);
+u8 dece_1D(Cpu* cpu);
+u8 decl_2D(Cpu* cpu);
+u8 deca_3D(Cpu* cpu);

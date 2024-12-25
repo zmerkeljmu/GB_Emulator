@@ -2,7 +2,7 @@
 #include "cart.h"
 
 
-Cpu::Cpu(mmu* memory) {
+Cpu::Cpu(Mmu* memory) {
 	
 	pc = 0x100;
 	sp = 0xFFFE;
@@ -127,3 +127,30 @@ u16 Cpu::read_hl() {
 	return (h << 8) | l;
 }
 
+void Cpu::write_af(u16 value) {
+	u8 high_bits = (u8) (value >> 8);
+	u8 low_bits = (u8) value;
+	this->reg_a = high_bits;
+	this->reg_f = low_bits;
+}
+
+void Cpu::write_bc(u16 value) {
+	u8 high_bits = (u8) (value >> 8);
+	u8 low_bits = (u8) value;
+	this->reg_b = high_bits;
+	this->reg_c = low_bits;
+}
+
+void Cpu::write_de(u16 value) {
+	u8 high_bits = (u8)(value >> 8);
+	u8 low_bits = (u8) value;
+	this->reg_d = high_bits;
+	this->reg_e = low_bits;
+}
+
+void Cpu::write_hl(u16 value) {
+	u8 high_bits = (u8)(value >> 8);
+	u8 low_bits = (u8) value;
+	this->reg_h = high_bits;
+	this->reg_l = low_bits;
+}

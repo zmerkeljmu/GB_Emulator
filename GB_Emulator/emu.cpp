@@ -8,7 +8,7 @@ int main() {
 	cartridge cart(filepath);
 
 	cart.print_header_data();
-	mmu mem(&cart);
+	Mmu mem(&cart);
 
 
 	Cpu cpu(&mem);
@@ -31,4 +31,9 @@ int main() {
 	
 	u16 res = cpu.read_bc();
 	printf("Register BC: 0x%04x\n", res);
+
+
+	cpu.write_af(0x14AB);
+
+	printf("AF REGISTER: 0x%04x\n", cpu.read_af());
 }

@@ -36,6 +36,12 @@
     <ClCompile Include="common.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="16bit_arithmetic.cpp">
+      <Filter>Source Files\instructions</Filter>
+    </ClCompile>
+    <ClCompile Include="8bit_load.cpp">
+      <Filter>Source Files\instructions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cart.h">
@@ -54,6 +60,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="8bit_arithmetic.h">
+      <Filter>Source Files\instructions</Filter>
+    </ClInclude>
+    <ClInclude Include="16bit_arithmetic.h">
+      <Filter>Source Files\instructions</Filter>
+    </ClInclude>
+    <ClInclude Include="8bit_load.h">
       <Filter>Source Files\instructions</Filter>
     </ClInclude>
   </ItemGroup>

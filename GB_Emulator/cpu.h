@@ -7,7 +7,7 @@
 class Cpu {
 
 public :
-	Cpu(mmu* memory);
+	Cpu(Mmu* memory);
 
 	int step();
 
@@ -27,13 +27,18 @@ public :
 
 	bool halted;
 
-	mmu *mem;
+	Mmu *mem;
 
 
 	u16 read_af();
 	u16 read_bc();
 	u16 read_de();
 	u16 read_hl();
+
+	void write_af(u16 value);
+	void write_bc(u16 value);
+	void write_de(u16 value);
+	void write_hl(u16 value);
 
 	u8 read_pc();
 
