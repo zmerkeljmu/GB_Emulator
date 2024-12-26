@@ -76,8 +76,8 @@ u8 ldaa_7F(Cpu* cpu);
 
 u8 ldbca_02(Cpu* cpu);
 u8 lddea_12(Cpu* cpu);
-u8 ldhlposa_22(Cpu* cpu);
-u8 ldhlnega_32(Cpu* cpu);
+u8 ldhlinca_22(Cpu* cpu);
+u8 ldhldeca_32(Cpu* cpu);
 
 u8 ldbu8_06(Cpu* cpu);
 u8 lddu8_16(Cpu* cpu);
@@ -86,10 +86,19 @@ u8 ldhlu8_36(Cpu* cpu);
 
 u8 ldabc_0A(Cpu* cpu);
 u8 ldade_1A(Cpu* cpu);
-u8 ldahlpos_2A(Cpu* cpu);
-u8 ldahlneg_3A(Cpu* cpu);
+u8 ldahlinc_2A(Cpu* cpu);
+u8 ldahldec_3A(Cpu* cpu);
 
 u8 ldcu8_0E(Cpu* cpu);
 u8 ldeu8_1E(Cpu* cpu);
 u8 ldlu8_2E(Cpu* cpu);
 u8 ldau8_3E(Cpu* cpu);
+
+u8 ldFFu8a_E0(Cpu* cpu);
+u8 ldaFFu8_F0(Cpu* cpu);
+
+u8 ldFFca_E2(Cpu* cpu);
+u8 ldaFFc_F2(Cpu* cpu);
+
+u8 ldu16a_EA(Cpu* cpu);
+u8 ldau16_FA(Cpu* cpu);

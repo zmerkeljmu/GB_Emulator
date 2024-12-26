@@ -286,3 +286,130 @@ u8 ldaa_7F(Cpu* cpu) {
 	ld_reg_to_reg(cpu, &cpu->reg_a, &cpu->reg_a);
 	return 1;
 }
+
+u8 ldbca_02(Cpu* cpu) {
+	u16 bc = cpu->read_bc();
+	ld_reg_to_mem(cpu, &cpu->reg_a, bc);
+	return 2;
+}
+u8 lddea_12(Cpu* cpu) {
+	u16 de = cpu->read_de();
+	ld_reg_to_mem(cpu, &cpu->reg_a, de);
+	return 2;
+}
+u8 ldhlinca_22(Cpu* cpu) {
+	u16 hl = cpu->read_hl();
+	ld_reg_to_mem(cpu, &cpu->reg_a, hl);
+	cpu->write_hl(hl + 1);
+	return 2;
+}
+u8 ldhldeca_32(Cpu* cpu) {
+	u16 hl = cpu->read_hl();
+	ld_reg_to_mem(cpu, &cpu->reg_a, hl);
+	cpu->write_hl(hl - 1);
+	return 2;
+}
+
+u8 ldbu8_06(Cpu* cpu) {
+	u8 value = cpu->read_pc();
+	ld_reg_to_reg(cpu, &cpu->reg_b, &value);
+	return 2;
+}
+u8 lddu8_16(Cpu* cpu) {
+	u8 value = cpu->read_pc();
+	ld_reg_to_reg(cpu, &cpu->reg_d, &value);
+	return 2;
+}
+u8 ldhu8_26(Cpu* cpu) {
+	u8 value = cpu->read_pc();
+	ld_reg_to_reg(cpu, &cpu->reg_h, &value);
+	return 2;
+}
+u8 ldhlu8_36(Cpu* cpu) {
+	u8 value = cpu->read_pc();
+	u16 hl = cpu->read_hl();
+	ld_reg_to_mem(cpu, &value, hl);
+	return 3;
+}
+
+u8 ldabc_0A(Cpu* cpu) {
+	u16 bc = cpu->read_bc();
+	ld_mem_to_reg(cpu, &cpu->reg_a, bc);
+	return 2;
+}
+u8 ldade_1A(Cpu* cpu) {
+	u16 de = cpu->read_de();
+	ld_mem_to_reg(cpu, &cpu->reg_a, de);
+	return 2;
+}
+u8 ldahlinc_2A(Cpu* cpu) {
+	u16 hl = cpu->read_hl();
+	ld_mem_to_reg(cpu, &cpu->reg_a, hl);
+	cpu->write_hl(hl + 1);
+	return 2;
+}
+u8 ldahldec_3A(Cpu* cpu) {
+	u16 hl = cpu->read_hl();
+	ld_mem_to_reg(cpu, &cpu->reg_a, hl);
+	cpu->write_hl(hl - 1);
+	return 2;
+}
+
+u8 ldcu8_0E(Cpu* cpu) {
+	u8 value = cpu->read_pc();
+	ld_reg_to_reg(cpu, &cpu->reg_c, &value);
+	return 2;
+}
+u8 ldeu8_1E(Cpu* cpu) {
+	u8 value = cpu->read_pc();
+	ld_reg_to_reg(cpu, &cpu->reg_e, &value);
+	return 2;
+}
+u8 ldlu8_2E(Cpu* cpu) {
+	u8 value = cpu->read_pc();
+	ld_reg_to_reg(cpu, &cpu->reg_l, &value);
+	return 2;
+}
+u8 ldau8_3E(Cpu* cpu) {
+	u8 value = cpu->read_pc();
+	ld_reg_to_reg(cpu, &cpu->reg_a, &value);
+	return 2;
+}
+u8 ldFFu8a_E0(Cpu* cpu) {
+	u16 address = 0xFF00 + cpu->read_pc();
+	ld_reg_to_mem(cpu, &cpu->reg_a, address);
+	return 3;
+}
+u8 ldaFFu8_F0(Cpu* cpu) {
+	u16 address = 0xFF00 + cpu->read_pc();
+	ld_mem_to_reg(cpu, &cpu->reg_a, address);
+	return 3;
+}
+
+u8 ldFFca_E2(Cpu* cpu) {
+	u16 address = 0xFF00 + cpu->reg_c;
+	ld_reg_to_mem(cpu, &cpu->reg_a, address);
+	return 2;
+}
+u8 ldaFFc_F2(Cpu* cpu) {
+	u16 address = 0xFF00 + cpu->reg_c;
+	ld_mem_to_reg(cpu, &cpu->reg_a, address);
+}
+
+u8 ldu16a_EA(Cpu* cpu) {
+	u16 high = cpu->read_pc();
+	u16 low = cpu->read_pc();
+	u16 address = (high << 8) | low;
+
+	ld_reg_to_mem(cpu, &cpu->reg_a, address);
+	return 4;
+}
+u8 ldau16_FA(Cpu* cpu) {
+	u16 high = cpu->read_pc();
+	u16 low = cpu->read_pc();
+	u16 address = (high << 8) | low;
+
+	ld_mem_to_reg(cpu, &cpu->reg_a, address);
+	return 4;
+
+}
