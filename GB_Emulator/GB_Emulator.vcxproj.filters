@@ -42,6 +42,15 @@
     <ClCompile Include="8bit_load.cpp">
       <Filter>Source Files\instructions</Filter>
     </ClCompile>
+    <ClCompile Include="16bit_load.cpp">
+      <Filter>Source Files\instructions</Filter>
+    </ClCompile>
+    <ClCompile Include="stack.cpp">
+      <Filter>Source Files\instructions</Filter>
+    </ClCompile>
+    <ClCompile Include="branch.cpp">
+      <Filter>Source Files\instructions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cart.h">
@@ -66,6 +75,15 @@
       <Filter>Source Files\instructions</Filter>
     </ClInclude>
     <ClInclude Include="8bit_load.h">
+      <Filter>Source Files\instructions</Filter>
+    </ClInclude>
+    <ClInclude Include="16bit_load.h">
+      <Filter>Source Files\instructions</Filter>
+    </ClInclude>
+    <ClInclude Include="stack.h">
+      <Filter>Source Files\instructions</Filter>
+    </ClInclude>
+    <ClInclude Include="branch.h">
       <Filter>Source Files\instructions</Filter>
     </ClInclude>
   </ItemGroup>

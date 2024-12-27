@@ -394,6 +394,7 @@ u8 ldFFca_E2(Cpu* cpu) {
 u8 ldaFFc_F2(Cpu* cpu) {
 	u16 address = 0xFF00 + cpu->reg_c;
 	ld_mem_to_reg(cpu, &cpu->reg_a, address);
+	return 2;
 }
 
 u8 ldu16a_EA(Cpu* cpu) {
@@ -411,5 +412,5 @@ u8 ldau16_FA(Cpu* cpu) {
 
 	ld_mem_to_reg(cpu, &cpu->reg_a, address);
 	return 4;
-
 }
+

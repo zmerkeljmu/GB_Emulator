@@ -102,3 +102,4 @@ u8 ldaFFc_F2(Cpu* cpu);
 
 u8 ldu16a_EA(Cpu* cpu);
 u8 ldau16_FA(Cpu* cpu);
+
