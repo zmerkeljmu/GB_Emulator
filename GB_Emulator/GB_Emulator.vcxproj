@@ -131,12 +131,15 @@
     <ClCompile Include="16bit_load.cpp" />
     <ClCompile Include="8bit_arithmetic.cpp" />
     <ClCompile Include="8bit_load.cpp" />
+    <ClCompile Include="bits.cpp" />
     <ClCompile Include="jump_subroutine.cpp" />
     <ClCompile Include="cart.cpp" />
     <ClCompile Include="common.cpp" />
     <ClCompile Include="cpu.cpp" />
     <ClCompile Include="emu.cpp" />
     <ClCompile Include="memory.cpp" />
+    <ClCompile Include="misc.cpp" />
+    <ClCompile Include="misc.h" />
     <ClCompile Include="stack.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -144,6 +147,7 @@
     <ClInclude Include="16bit_load.h" />
     <ClInclude Include="8bit_arithmetic.h" />
     <ClInclude Include="8bit_load.h" />
+    <ClInclude Include="bits.h" />
     <ClInclude Include="jump_subroutine.h" />
     <ClInclude Include="cart.h" />
     <ClInclude Include="common.h" />

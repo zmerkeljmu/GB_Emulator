@@ -71,3 +71,42 @@ u8 pushaf_F5(Cpu* cpu) {
 	return 4;
 }
 
+u8 addspi8_E8(Cpu* cpu) {
+	i8 value = cpu->read_pc();
+	u16 address = cpu->sp;
+
+	if ((address & 0xFF) + value > 0xFF)
+		cpu->set_carry_flag();
+	else
+		cpu->clear_carry_flag();
+	if ((address & 0xF) + (value & 0xF) > 0xF)
+		cpu->set_hc_flag();
+	else
+		cpu->clear_hc_flag();
+	cpu->clear_zero_flag();
+	cpu->clear_s_flag();
+
+	cpu->sp += value;
+	return 4;
+
+}
+u8 ldhlspi8_F8(Cpu* cpu) {
+	i8 value = cpu->read_pc();
+	u16 address = cpu->sp;
+
+	if ((address & 0xFF) + value > 0xFF)
+		cpu->set_carry_flag();
+	else
+		cpu->clear_carry_flag();
+	if ((address & 0xF) + (value & 0xF) > 0xF)
+		cpu->set_hc_flag();
+	else
+		cpu->clear_hc_flag();
+	cpu->clear_zero_flag();
+	cpu->clear_s_flag();
+
+	cpu->write_hl(address + value);
+	
+	return 3;
+
+}

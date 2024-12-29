@@ -398,16 +398,16 @@ u8 ldaFFc_F2(Cpu* cpu) {
 }
 
 u8 ldu16a_EA(Cpu* cpu) {
-	u16 high = cpu->read_pc();
 	u16 low = cpu->read_pc();
+	u16 high = cpu->read_pc();
 	u16 address = (high << 8) | low;
 
 	ld_reg_to_mem(cpu, &cpu->reg_a, address);
 	return 4;
 }
 u8 ldau16_FA(Cpu* cpu) {
-	u16 high = cpu->read_pc();
 	u16 low = cpu->read_pc();
+	u16 high = cpu->read_pc();
 	u16 address = (high << 8) | low;
 
 	ld_mem_to_reg(cpu, &cpu->reg_a, address);

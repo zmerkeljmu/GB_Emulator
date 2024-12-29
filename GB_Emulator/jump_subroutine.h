@@ -1,6 +1,13 @@
 #pragma once
 #include "instruction.h"
 
+void stack_pop(Cpu* cpu, u8* reg_into);
+
+void stack_push(Cpu* cpu, u8* reg_from);
+
+void calln16(Cpu* cpu);
+
+
 
 u8 jrnzi8_20(Cpu* cpu);
 u8 jrnci8_30(Cpu* cpu);

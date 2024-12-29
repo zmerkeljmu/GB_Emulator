@@ -4,7 +4,7 @@
 #include <iostream>
 
 int main() {
-	std::string filepath = "C:/Users/David/Documents/CS/EMU/pokemon_red.gb";
+	std::string filepath = "C:\\Users\\zacha\\OneDrive\\Desktop\\red.gb";
 	cartridge cart(filepath);
 
 	cart.print_header_data();

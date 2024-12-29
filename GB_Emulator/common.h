@@ -12,7 +12,8 @@ typedef int32_t i32;
 
 namespace common {
 	const u32 memsize = 0x10000;
-
+	const u32 IE = 0xFFFF;
+	const u32 IF = 0xFF0F;
 }
 
 enum flags

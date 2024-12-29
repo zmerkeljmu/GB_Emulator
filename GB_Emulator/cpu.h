@@ -26,6 +26,8 @@ public :
 	u8 reg_l;
 
 	bool halted;
+	bool ime;
+
 
 	Mmu *mem;
 
