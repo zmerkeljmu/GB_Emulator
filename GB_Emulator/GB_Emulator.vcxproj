@@ -132,6 +132,8 @@
     <ClCompile Include="8bit_arithmetic.cpp" />
     <ClCompile Include="8bit_load.cpp" />
     <ClCompile Include="bits.cpp" />
+    <ClCompile Include="bit_flag.cpp" />
+    <ClCompile Include="bit_shift.cpp" />
     <ClCompile Include="jump_subroutine.cpp" />
     <ClCompile Include="cart.cpp" />
     <ClCompile Include="common.cpp" />
@@ -148,6 +150,8 @@
     <ClInclude Include="8bit_arithmetic.h" />
     <ClInclude Include="8bit_load.h" />
     <ClInclude Include="bits.h" />
+    <ClInclude Include="bit_flag.h" />
+    <ClInclude Include="bit_shift.h" />
     <ClInclude Include="jump_subroutine.h" />
     <ClInclude Include="cart.h" />
     <ClInclude Include="common.h" />

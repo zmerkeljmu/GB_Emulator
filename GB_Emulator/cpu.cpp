@@ -16,12 +16,13 @@ Cpu::Cpu(Mmu* memory) {
 	reg_l = 0x4D;
 
 	halted = false;
-
+	cb = false;
 	mem = memory;
 
 }
 
 int Cpu::step() {
+	bool set_ime = this->pending_ei;
 	int cycles;
 	
 	//fetch
@@ -30,17 +31,22 @@ int Cpu::step() {
 	//execute
 	cycles = inst.function(this);
 
+	if (set_ime) {
+		this->ime = 1;
+		this->pending_ei = false;
+	}
 	return cycles;
 }
 
 instruction Cpu::fetch_instruction() {
 	u8 opcode = this->read_pc();
-
-	instruction inst = instruction_list.base[opcode];
-	
-	//this line is wrong i think
-	pc += inst.bytes - 1;
-
+	instruction inst;
+	if (!this->cb) 
+		inst = instruction_list.base[opcode];
+	else {
+		inst = instruction_list.cb[opcode];
+		this->cb = false;
+	}
 	return inst;
 }
 

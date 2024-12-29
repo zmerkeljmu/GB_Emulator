@@ -2,20 +2,89 @@
 #include "cpu.h"
 
 
-u8 nop_00(Cpu* cpu);
+u8 nop_00(Cpu* cpu) {
+	return 1;
+}
 u8 stop_10(Cpu* cpu);
 
 u8 halt_76(Cpu* cpu);
-//requires ime/interrupts
-u8 di_F4(Cpu* cpu);
 
-u8 cb_CB(Cpu* cpu);
-u8 ei_FB(Cpu* cpu);
+//requires ime/interrupts
+u8 di_F4(Cpu* cpu) {
+	cpu->ime = 0;
+	return 1;
+}
+
+u8 cb_CB(Cpu* cpu) {
+	cpu->cb = true;
+	return 1;
+}
+
+u8 ei_FB(Cpu* cpu) {
+	cpu->pending_ei = 1;
+	return 1;
+}
 
 //carry flag instructions
 
-u8 cpl_2F(Cpu* cpu);
-u8 ccf_3F(Cpu* cpu);
+u8 cpl_2F(Cpu* cpu) {
+	cpu->reg_a = ~cpu->reg_a;
+	cpu->set_s_flag();
+	cpu->set_hc_flag();
+	return 1;
+}
+u8 ccf_3F(Cpu* cpu) {
+	if (cpu->read_carry_flag() == 1)
+		cpu->clear_carry_flag();
+	else
+		cpu->set_carry_flag();
+	cpu->clear_s_flag();
+	cpu->clear_hc_flag();
+	return 1;
+}
 
-u8 daa_27(Cpu* cpu);
-u8 scf_37(Cpu* cpu);
+u8 daa_27(Cpu* cpu) {
+	u8 adjustment = 0;
+	u16 result;
+	
+	if (cpu->read_s_flag() == 1) {
+		if (cpu->read_hc_flag())
+			adjustment += 0x6;
+		if (cpu->read_carry_flag())
+			adjustment += 0x60;
+		
+		if (adjustment > cpu->reg_a)
+			cpu->set_carry_flag();
+		else
+			cpu->clear_carry_flag();
+		result = cpu->reg_a - adjustment;
+		cpu->reg_a -= adjustment;
+
+	} else {
+		if (cpu->read_hc_flag() == 1 || (cpu->reg_a & 0xF) > 0x9)
+			adjustment += 0x6;
+		if (cpu->read_carry_flag() == 1)
+			adjustment += 0x60;
+		result = cpu->reg_a + adjustment;
+		cpu->reg_a += adjustment;
+		
+		if (result > 0xFF)
+			cpu->set_carry_flag();
+		else
+			cpu->clear_carry_flag();
+	}
+
+	if ((u8)result == 0)
+		cpu->set_zero_flag();
+	else
+		cpu->clear_zero_flag();
+	cpu->clear_hc_flag();
+	return 1;
+}
+
+u8 scf_37(Cpu* cpu) {
+	cpu->clear_hc_flag();
+	cpu->clear_s_flag();
+	cpu->set_carry_flag();
+	return 1;
+}

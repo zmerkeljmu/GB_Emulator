@@ -27,6 +27,8 @@ public :
 
 	bool halted;
 	bool ime;
+	bool pending_ei;
+	bool cb;
 
 
 	Mmu *mem;
