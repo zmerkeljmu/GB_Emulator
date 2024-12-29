@@ -16,6 +16,9 @@
     <Filter Include="Source Files\instructions">
       <UniqueIdentifier>{f6110c46-3cff-4d9e-9358-eb59f9ab1e54}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\CB">
+      <UniqueIdentifier>{8d9cd764-5842-45fd-af53-b18fce3280c7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cart.cpp">
@@ -48,8 +51,23 @@
     <ClCompile Include="stack.cpp">
       <Filter>Source Files\instructions</Filter>
     </ClCompile>
-    <ClCompile Include="branch.cpp">
+    <ClCompile Include="jump_subroutine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="bits.cpp">
       <Filter>Source Files\instructions</Filter>
+    </ClCompile>
+    <ClCompile Include="misc.cpp">
+      <Filter>Source Files\instructions</Filter>
+    </ClCompile>
+    <ClCompile Include="misc.h">
+      <Filter>Source Files\instructions</Filter>
+    </ClCompile>
+    <ClCompile Include="bit_flag.cpp">
+      <Filter>Source Files\CB</Filter>
+    </ClCompile>
+    <ClCompile Include="bit_shift.cpp">
+      <Filter>Source Files\CB</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -83,8 +101,17 @@
     <ClInclude Include="stack.h">
       <Filter>Source Files\instructions</Filter>
     </ClInclude>
-    <ClInclude Include="branch.h">
+    <ClInclude Include="jump_subroutine.h">
       <Filter>Source Files\instructions</Filter>
+    </ClInclude>
+    <ClInclude Include="bits.h">
+      <Filter>Source Files\instructions</Filter>
+    </ClInclude>
+    <ClInclude Include="bit_shift.h">
+      <Filter>Source Files\CB</Filter>
+    </ClInclude>
+    <ClInclude Include="bit_flag.h">
+      <Filter>Source Files\CB</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
