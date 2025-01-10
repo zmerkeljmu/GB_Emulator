@@ -1,6 +1,5 @@
 #pragma once
-#include "instruction.h"
-
+#include "common.h"
 
 void ld_reg_to_reg(Cpu* cpu, u8* write_reg, u8* read_reg);
 
@@ -63,7 +62,7 @@ u8 ldhld_72(Cpu* cpu);
 u8 ldhle_73(Cpu* cpu);
 u8 ldhlh_74(Cpu* cpu);
 u8 ldhll_75(Cpu* cpu);
-//halt
+
 u8 ldhla_77(Cpu* cpu);
 u8 ldab_78(Cpu* cpu);
 u8 ldac_79(Cpu* cpu);

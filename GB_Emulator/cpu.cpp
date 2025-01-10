@@ -1,5 +1,4 @@
 #include "cpu.h"
-#include "cart.h"
 
 
 Cpu::Cpu(Mmu* memory) {
@@ -15,10 +14,12 @@ Cpu::Cpu(Mmu* memory) {
 	reg_h = 0x01;
 	reg_l = 0x4D;
 
+	ime = false;
 	halted = false;
 	cb = false;
 	mem = memory;
 
+	debug = true;
 }
 
 int Cpu::step() {
@@ -27,6 +28,9 @@ int Cpu::step() {
 	
 	//fetch
 	instruction inst = fetch_instruction();
+	if (debug) {
+		printf("Instruction: %s\n", inst.name);
+	}
 	//decode
 	//execute
 	cycles = inst.function(this);

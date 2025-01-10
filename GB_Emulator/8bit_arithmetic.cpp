@@ -16,11 +16,12 @@ void add_rtor(Cpu* cpu, u8* reg) {
 	else
 		cpu->clear_hc_flag();
 	//check zero flag
-	if (result == 0)
+	cpu->reg_a += *reg;
+	if (cpu->reg_a == 0)
 		cpu->set_zero_flag();
 	else
 		cpu->clear_zero_flag();
-	cpu->reg_a = (u8) result;
+	cpu->clear_s_flag();
 	return;
 }
 
@@ -75,7 +76,8 @@ void adc_rtor(Cpu* cpu, u8* reg) {
 	else
 		cpu->clear_hc_flag();
 	//check zero flag
-	if (result == 0)
+	cpu->reg_a += *reg + cpu->read_carry_flag();
+	if (cpu->reg_a == 0)
 		cpu->set_zero_flag();
 	else
 		cpu->clear_zero_flag();
@@ -84,7 +86,8 @@ void adc_rtor(Cpu* cpu, u8* reg) {
 		cpu->set_carry_flag();
 	else
 		cpu->clear_carry_flag();
-	cpu->reg_a = (u8) result;
+	cpu->clear_s_flag();
+	
 	return;
 }
 
@@ -408,7 +411,7 @@ u8 orhl_B6(Cpu* cpu) {
 	return 2;
 } 
 u8 ora_B7(Cpu* cpu) {
-	or_rtor(cpu, &cpu->reg_l);
+	or_rtor(cpu, &cpu->reg_a);
 	return 1;
 }
 u8 ori8_F6(Cpu* cpu){
@@ -481,12 +484,12 @@ u8 cpi8_FE(Cpu* cpu) {
 void inc_reg(Cpu* cpu, u8* reg) {
 	u8 reg_in = *reg;
 	
-	*reg++;
+	*reg = *reg + 1;
 	if (*reg == 0)
 		cpu->set_zero_flag();
 	else
 		cpu->clear_zero_flag();
-	cpu->set_s_flag();
+	cpu->clear_s_flag();
 
 	if ((reg_in & 0xF) + 1 > 0xF)
 		cpu->set_hc_flag();
@@ -511,7 +514,18 @@ u8 incb_04(Cpu* cpu) {
 u8 inchl_34(Cpu* cpu) {
 	u16 address = cpu->read_hl();
 	u8 byte_in_mem = cpu->mem->read_byte(address);
+	u8 byte_in_mem_in = byte_in_mem;
 	byte_in_mem++;
+	if (byte_in_mem == 0)
+		cpu->set_zero_flag();
+	else
+		cpu->clear_zero_flag();
+	cpu->clear_s_flag();
+
+	if ((byte_in_mem_in & 0xF) + 1 > 0xF)
+		cpu->set_hc_flag();
+	else
+		cpu->clear_hc_flag();
 	cpu->mem->write_byte(address, byte_in_mem);
 	return 3;
 }
@@ -534,15 +548,16 @@ u8 inca_3C(Cpu* cpu) {
 
 void dec_reg(Cpu* cpu, u8* reg) {
 	u8 reg_in = *reg;
+	i8 signed_reg = (i8)*reg;
 
-	*reg--;
+	*reg = *reg - 1;
 	if (*reg == 0)
 		cpu->set_zero_flag();
 	else
 		cpu->clear_zero_flag();
 	cpu->set_s_flag();
 
-	if (((*reg & 0x0F) - 1) < 0)
+	if (((signed_reg & 0x0F) - 1) < 0)
 		cpu->set_hc_flag();
 	else
 		cpu->clear_hc_flag();
@@ -565,7 +580,20 @@ u8 dech_25(Cpu* cpu) {
 u8 dechl_35(Cpu* cpu) {
 	u16 address = cpu->read_hl();
 	u8 byte_in_mem = cpu->mem->read_byte(address);
+	i8 signed_byte = byte_in_mem;
 	byte_in_mem--;
+
+	if (byte_in_mem == 0)
+		cpu->set_zero_flag();
+	else
+		cpu->clear_zero_flag();
+	cpu->set_s_flag();
+
+	if (((signed_byte & 0x0F) - 1) < 0)
+		cpu->set_hc_flag();
+	else
+		cpu->clear_hc_flag();
+
 	cpu->mem->write_byte(address, byte_in_mem);
 	return 3;
 }

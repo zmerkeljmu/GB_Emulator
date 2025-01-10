@@ -1,5 +1,5 @@
 #pragma once
-#include "instruction.h"
+#include "common.h"
 
 void stack_pop(Cpu* cpu, u8* reg_into);
 

@@ -10,10 +10,10 @@ void rlc(Cpu* cpu, u8* reg) {
 		cpu->set_zero_flag();
 	else
 		cpu->clear_zero_flag();
-	if (carryout == 0)
-		cpu->set_zero_flag();
+	if (carryout == 1)
+		cpu->set_carry_flag();
 	else
-		cpu->clear_zero_flag();
+		cpu->clear_carry_flag();
 	cpu->clear_s_flag();
 	cpu->clear_hc_flag();
 	return;
@@ -54,20 +54,22 @@ u8 rlchl_06(Cpu* cpu) {
 		cpu->set_zero_flag();
 	else
 		cpu->clear_zero_flag();
-	if (carryout == 0)
-		cpu->set_zero_flag();
+	if (carryout == 1)
+		cpu->set_carry_flag();
 	else
-		cpu->clear_zero_flag();
+		cpu->clear_carry_flag();
 	cpu->clear_s_flag();
 	cpu->clear_hc_flag();
 
 	cpu->mem->write_byte(cpu->read_hl(), val);
 	return 4;
 }
-u8 rlca_07(Cpu* cpu) {
+
+u8 cbrlca_07(Cpu* cpu) {
 	rlc(cpu, &cpu->reg_a);
 	return 2;
 }
+
 
 void rrc(Cpu* cpu, u8* reg) {
 	u8 carryout = u8read_bit(0, reg);
@@ -129,7 +131,7 @@ u8 rrchl_0E(Cpu* cpu) {
 	return 4;
 
 }
-u8 rrca_0F(Cpu* cpu) {
+u8 cbrrca_0F(Cpu* cpu) {
 	rrc(cpu, &cpu->reg_a);
 	return 2;
 }
@@ -183,7 +185,7 @@ u8 rlhl_16(Cpu* cpu) {
 	cpu->mem->write_byte(cpu->read_hl(), val);
 	return 4;
 }
-u8 rla_17(Cpu* cpu) {
+u8 cbrla_17(Cpu* cpu) {
 	rl(cpu, &cpu->reg_a);
 	return 2;
 }
@@ -237,7 +239,7 @@ u8 rrhl_1E(Cpu* cpu) {
 	cpu->mem->write_byte(cpu->read_hl(), val);
 	return 4;
 }
-u8 rra_1F(Cpu* cpu) {
+u8 cbrra_1F(Cpu* cpu) {
 	rr(cpu, &cpu->reg_a);
 	return 2;
 }
@@ -355,6 +357,7 @@ void swap(Cpu* cpu, u8* reg) {
 	cpu->clear_s_flag();
 	cpu->clear_hc_flag();
 	cpu->clear_carry_flag();
+	*reg = result;
 	return;
 
 }

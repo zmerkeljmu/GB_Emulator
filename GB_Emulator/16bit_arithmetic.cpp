@@ -31,7 +31,7 @@ u8 dechl_2B(Cpu* cpu) {
 	cpu->write_hl(cpu->read_hl() - 1);
 	return 2;
 }
-u8 decsp_2B(Cpu* cpu) {
+u8 decsp_3B(Cpu* cpu) {
 	cpu->sp -= 1;
 	return 2;
 }
@@ -57,7 +57,7 @@ u8 addbc_09(Cpu* cpu) {
 }
 u8 addde_19(Cpu* cpu) {
 	u16 hl = cpu->read_hl();
-	u16 de = cpu->read_bc();
+	u16 de = cpu->read_de();
 	u32 result = hl + de;
 
 	cpu->clear_s_flag();

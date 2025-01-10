@@ -1,5 +1,5 @@
 #pragma once
-#include "instruction.h"
+#include "common.h"
 
 u8 rlcb_00(Cpu* cpu);
 u8 rlcc_01(Cpu* cpu);
@@ -8,7 +8,7 @@ u8 rlce_03(Cpu* cpu);
 u8 rlch_04(Cpu* cpu);
 u8 rlcl_05(Cpu* cpu);
 u8 rlchl_06(Cpu* cpu);
-u8 rlca_07(Cpu* cpu);
+u8 cbrlca_07(Cpu* cpu);
 
 u8 rrcb_08(Cpu* cpu);
 u8 rrcc_09(Cpu* cpu);
@@ -17,7 +17,7 @@ u8 rrce_0B(Cpu* cpu);
 u8 rrch_0C(Cpu* cpu);
 u8 rrcl_0D(Cpu* cpu);
 u8 rrchl_0E(Cpu* cpu);
-u8 rrca_0F(Cpu* cpu);
+u8 cbrrca_0F(Cpu* cpu);
 
 
 u8 rlb_10(Cpu* cpu);
@@ -27,7 +27,7 @@ u8 rle_13(Cpu* cpu);
 u8 rlh_14(Cpu* cpu);
 u8 rll_15(Cpu* cpu);
 u8 rlhl_16(Cpu* cpu);
-u8 rla_17(Cpu* cpu);
+u8 cbrla_17(Cpu* cpu);
 
 u8 rrb_18(Cpu* cpu);
 u8 rrc_19(Cpu* cpu);
@@ -36,7 +36,7 @@ u8 rre_1B(Cpu* cpu);
 u8 rrh_1C(Cpu* cpu);
 u8 rrl_1D(Cpu* cpu);
 u8 rrhl_1E(Cpu* cpu);
-u8 rra_1F(Cpu* cpu);
+u8 cbrra_1F(Cpu* cpu);
 
 
 u8 slab_20(Cpu* cpu);

@@ -1,13 +1,19 @@
-#include "misc.h"
+#include "misc_inst.h"
 #include "cpu.h"
 
 
 u8 nop_00(Cpu* cpu) {
 	return 1;
 }
-u8 stop_10(Cpu* cpu);
+u8 stop_10(Cpu* cpu) {
+	return 0;
+}
 
-u8 halt_76(Cpu* cpu);
+u8 halt_76(Cpu* cpu) {
+	
+	return 0;
+	
+}
 
 //requires ime/interrupts
 u8 di_F4(Cpu* cpu) {
@@ -52,29 +58,20 @@ u8 daa_27(Cpu* cpu) {
 			adjustment += 0x6;
 		if (cpu->read_carry_flag())
 			adjustment += 0x60;
-		
-		if (adjustment > cpu->reg_a)
-			cpu->set_carry_flag();
-		else
-			cpu->clear_carry_flag();
 		result = cpu->reg_a - adjustment;
 		cpu->reg_a -= adjustment;
 
 	} else {
 		if (cpu->read_hc_flag() == 1 || (cpu->reg_a & 0xF) > 0x9)
 			adjustment += 0x6;
-		if (cpu->read_carry_flag() == 1)
+		if (cpu->read_carry_flag() == 1 || (cpu->reg_a > 0x99)) {
 			adjustment += 0x60;
-		result = cpu->reg_a + adjustment;
-		cpu->reg_a += adjustment;
-		
-		if (result > 0xFF)
 			cpu->set_carry_flag();
-		else
-			cpu->clear_carry_flag();
+		}
+		cpu->reg_a += adjustment;
 	}
 
-	if ((u8)result == 0)
+	if (cpu->reg_a == 0)
 		cpu->set_zero_flag();
 	else
 		cpu->clear_zero_flag();

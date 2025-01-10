@@ -13,5 +13,5 @@ void u8set_bit(u8 bit, u8* reg, u8 value) {
 }
 
 bool u8read_bit(u8 bit, u8* reg) {
-	return (*reg >> bit) & (u8)1;
+	return (*reg >> bit) & 0x01;
 }

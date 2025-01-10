@@ -1,5 +1,5 @@
 #pragma once
-#include "instruction.h"
+#include "common.h"
 
 void add_rtor(Cpu* cpu, u8* reg);
 

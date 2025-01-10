@@ -1,5 +1,6 @@
 #pragma once
-#include "instruction.h"
+#include "common.h"
+
 
 u8 nop_00(Cpu* cpu);
 u8 stop_10(Cpu* cpu);

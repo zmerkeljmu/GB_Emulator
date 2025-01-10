@@ -1,5 +1,5 @@
 #pragma once
-#include "instruction.h"
+#include "common.h"
 
 u8 bit0b_40(Cpu* cpu);
 u8 bit0c_41(Cpu* cpu);

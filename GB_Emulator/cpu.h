@@ -2,6 +2,8 @@
 #include "common.h"
 #include "memory.h"
 #include "instruction.h"
+#include "cart.h"
+
 
 
 class Cpu {
@@ -30,6 +32,7 @@ public :
 	bool pending_ei;
 	bool cb;
 
+	bool debug;
 
 	Mmu *mem;
 
@@ -64,3 +67,4 @@ public :
 private:
 	Instruction_list instruction_list;
 };
+

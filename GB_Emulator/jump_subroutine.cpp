@@ -8,8 +8,8 @@ void stack_pop(Cpu* cpu, u8* reg_into) {
 }
 
 void stack_push(Cpu* cpu, u8* reg_from) {
-	cpu->mem->write_byte(cpu->sp, *reg_from);
 	cpu->sp--;
+	cpu->mem->write_byte(cpu->sp, *reg_from);
 	return;
 }
 
@@ -18,8 +18,8 @@ u8 jrnzi8_20(Cpu* cpu) {
 	u8 zero_flag = cpu->read_zero_flag();
 	i8 value = cpu->read_pc();
 
-	if (zero_flag == 1) {
-		cpu->sp += value;
+	if (zero_flag == 0) {
+		cpu->pc += value;
 		return 3;
 	}
 	else {
@@ -30,8 +30,8 @@ u8 jrnci8_30(Cpu* cpu) {
 	u8 carry_flag = cpu->read_carry_flag();
 	i8 value = cpu->read_pc();
 
-	if (carry_flag == 1) {
-		cpu->sp += value;
+	if (carry_flag == 0) {
+		cpu->pc += value;
 		return 3;
 	}
 	else {
@@ -41,15 +41,15 @@ u8 jrnci8_30(Cpu* cpu) {
 
 u8 jri8_18(Cpu* cpu) {
 	i8 value = cpu->read_pc();
-	cpu->sp += value;
+	cpu->pc += value;
 	return 3;
 }
 u8 jrzi8_28(Cpu* cpu) {
 	u8 zero_flag = cpu->read_zero_flag();
 	i8 value = cpu->read_pc();
 
-	if (zero_flag == 0) {
-		cpu->sp += value;
+	if (zero_flag == 1) {
+		cpu->pc += value;
 		return 3;
 	}
 	else {
@@ -61,8 +61,8 @@ u8 jrci8_38(Cpu* cpu) {
 	u8 carry_flag = cpu->read_carry_flag();
 	i8 value = cpu->read_pc();
 
-	if (carry_flag == 0) {
-		cpu->sp += value;
+	if (carry_flag == 1) {
+		cpu->pc += value;
 		return 3;
 	}
 	else {
@@ -184,6 +184,7 @@ void rst(Cpu* cpu, u16 low) {
 	u8 high_push = (u8)((cpu->pc) >> 8);
 	stack_push(cpu, &high_push);
 	stack_push(cpu, &low_push);
+	cpu->pc = address_jmp;
 	return;
 }
 
@@ -247,8 +248,16 @@ u8 ret_C9(Cpu* cpu) {
 	return 4;
 }
 
-//unimplemented
-u8 reti_D9(Cpu* cpu);
+u8 reti_D9(Cpu* cpu) {
+	u8 low8;
+	u8 high8;
+
+	stack_pop(cpu, &low8);
+	stack_pop(cpu, &high8);
+	cpu->pc = (u16)low8 | ((u16)high8 << 8);
+	cpu->ime = true;
+	return 4;
+}
 
 u8 jphl_E9(Cpu* cpu) {
 	cpu->pc = cpu->read_hl();
@@ -260,7 +269,7 @@ u8 jpzu16_CA(Cpu* cpu) {
 	u16 high = cpu->read_pc();
 	u16 address = low | (high << 8);
 
-	if (cpu->read_zero_flag() == 0) {
+	if (cpu->read_zero_flag() == 1) {
 		cpu->pc = address;
 		return 4;
 	}
@@ -271,7 +280,7 @@ u8 jpcu16_DA(Cpu* cpu) {
 	u16 high = cpu->read_pc();
 	u16 address = low | (high << 8);
 
-	if (cpu->read_carry_flag() == 0) {
+	if (cpu->read_carry_flag() == 1) {
 		cpu->pc = address;
 		return 4;
 	}

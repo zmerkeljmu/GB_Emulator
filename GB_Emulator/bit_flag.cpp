@@ -319,7 +319,8 @@ u8 res0l_85(Cpu* cpu) {
 u8 res0hl_86(Cpu* cpu) {
 	u8 val = cpu->mem->read_byte(cpu->read_hl());
 	res(cpu, &val, 0);
-	return 3;
+	cpu->mem->write_byte(cpu->read_hl(), val);
+	return 4;
 }
 u8 res0a_87(Cpu* cpu) {
 	res(cpu, &cpu->reg_a, 0);
@@ -353,7 +354,8 @@ u8 res1l_8D(Cpu* cpu) {
 u8 res1hl_8E(Cpu* cpu) {
 	u8 val = cpu->mem->read_byte(cpu->read_hl());
 	res(cpu, &val, 1);
-	return 3;
+	cpu->mem->write_byte(cpu->read_hl(), val);
+	return 4;
 }
 u8 res1a_8F(Cpu* cpu) {
 	res(cpu, &cpu->reg_a, 1);
@@ -388,7 +390,8 @@ u8 res2l_95(Cpu* cpu) {
 u8 res2hl_96(Cpu* cpu) {
 	u8 val = cpu->mem->read_byte(cpu->read_hl());
 	res(cpu, &val, 2);
-	return 3;
+	cpu->mem->write_byte(cpu->read_hl(), val);
+	return 4;
 }
 u8 res2a_97(Cpu* cpu) {
 	res(cpu, &cpu->reg_a, 2);
@@ -422,7 +425,8 @@ u8 res3l_9D(Cpu* cpu) {
 u8 res3hl_9E(Cpu* cpu) {
 	u8 val = cpu->mem->read_byte(cpu->read_hl());
 	res(cpu, &val, 3);
-	return 3;
+	cpu->mem->write_byte(cpu->read_hl(), val);
+	return 4;
 }
 u8 res3a_9F(Cpu* cpu) {
 	res(cpu, &cpu->reg_a, 3);
@@ -457,7 +461,8 @@ u8 res4l_A5(Cpu* cpu) {
 u8 res4hl_A6(Cpu* cpu) {
 	u8 val = cpu->mem->read_byte(cpu->read_hl());
 	res(cpu, &val, 4);
-	return 3;
+	cpu->mem->write_byte(cpu->read_hl(), val);
+	return 4;
 }
 u8 res4a_A7(Cpu* cpu) {
 	res(cpu, &cpu->reg_a, 4);
@@ -491,7 +496,8 @@ u8 res5l_AD(Cpu* cpu) {
 u8 res5hl_AE(Cpu* cpu) {
 	u8 val = cpu->mem->read_byte(cpu->read_hl());
 	res(cpu, &val, 5);
-	return 3;
+	cpu->mem->write_byte(cpu->read_hl(), val);
+	return 4;
 }
 u8 res5a_AF(Cpu* cpu) {
 	res(cpu, &cpu->reg_a, 5);
@@ -526,7 +532,8 @@ u8 res6l_B5(Cpu* cpu) {
 u8 res6hl_B6(Cpu* cpu) {
 	u8 val = cpu->mem->read_byte(cpu->read_hl());
 	res(cpu, &val, 6);
-	return 3;
+	cpu->mem->write_byte(cpu->read_hl(), val);
+	return 4;
 }
 u8 res6a_B7(Cpu* cpu) {
 	res(cpu, &cpu->reg_a, 6);
@@ -560,7 +567,8 @@ u8 res7l_BD(Cpu* cpu) {
 u8 res7hl_BE(Cpu* cpu) {
 	u8 val = cpu->mem->read_byte(cpu->read_hl());
 	res(cpu, &val, 7);
-	return 3;
+	cpu->mem->write_byte(cpu->read_hl(), val);
+	return 4;
 }
 u8 res7a_BF(Cpu* cpu) {
 	res(cpu, &cpu->reg_a, 7);
@@ -600,7 +608,8 @@ u8 set0l_C5(Cpu* cpu) {
 u8 set0hl_C6(Cpu* cpu) {
 	u8 val = cpu->mem->read_byte(cpu->read_hl());
 	set(cpu, &val, 0);
-	return 3;
+	cpu->mem->write_byte(cpu->read_hl(), val);
+	return 4;
 }
 u8 set0a_C7(Cpu* cpu) {
 	set(cpu, &cpu->reg_a, 0);
@@ -634,7 +643,8 @@ u8 set1l_CD(Cpu* cpu) {
 u8 set1hl_CE(Cpu* cpu) {
 	u8 val = cpu->mem->read_byte(cpu->read_hl());
 	set(cpu, &val, 1);
-	return 3;
+	cpu->mem->write_byte(cpu->read_hl(), val);
+	return 4;
 }
 u8 set1a_CF(Cpu* cpu) {
 	set(cpu, &cpu->reg_a, 1);
@@ -669,7 +679,8 @@ u8 set2l_D5(Cpu* cpu) {
 u8 set2hl_D6(Cpu* cpu) {
 	u8 val = cpu->mem->read_byte(cpu->read_hl());
 	set(cpu, &val, 2);
-	return 3;
+	cpu->mem->write_byte(cpu->read_hl(), val);
+	return 4;
 }
 u8 set2a_D7(Cpu* cpu) {
 	set(cpu, &cpu->reg_a, 2);
@@ -703,7 +714,8 @@ u8 set3l_DD(Cpu* cpu) {
 u8 set3hl_DE(Cpu* cpu) {
 	u8 val = cpu->mem->read_byte(cpu->read_hl());
 	set(cpu, &val, 3);
-	return 3;
+	cpu->mem->write_byte(cpu->read_hl(), val);
+	return 4;
 }
 u8 set3a_DF(Cpu* cpu) {
 	set(cpu, &cpu->reg_a, 3);
@@ -738,7 +750,8 @@ u8 set4l_E5(Cpu* cpu) {
 u8 set4hl_E6(Cpu* cpu) {
 	u8 val = cpu->mem->read_byte(cpu->read_hl());
 	set(cpu, &val, 4);
-	return 3;
+	cpu->mem->write_byte(cpu->read_hl(), val);
+	return 4;
 }
 u8 set4a_E7(Cpu* cpu) {
 	set(cpu, &cpu->reg_a, 4);
@@ -773,7 +786,8 @@ u8 set5l_ED(Cpu* cpu) {
 u8 set5hl_EE(Cpu* cpu) {
 	u8 val = cpu->mem->read_byte(cpu->read_hl());
 	set(cpu, &val, 5);
-	return 3;
+	cpu->mem->write_byte(cpu->read_hl(), val);
+	return 4;
 }
 u8 set5a_EF(Cpu* cpu) {
 	set(cpu, &cpu->reg_a, 5);
@@ -808,7 +822,8 @@ u8 set6l_F5(Cpu* cpu) {
 u8 set6hl_F6(Cpu* cpu) {
 	u8 val = cpu->mem->read_byte(cpu->read_hl());
 	set(cpu, &val, 6);
-	return 3;
+	cpu->mem->write_byte(cpu->read_hl(), val);
+	return 4;
 }
 u8 set6a_F7(Cpu* cpu) {
 	set(cpu, &cpu->reg_a, 6);
@@ -842,7 +857,8 @@ u8 set7l_FD(Cpu* cpu) {
 u8 set7hl_FE(Cpu* cpu) {
 	u8 val = cpu->mem->read_byte(cpu->read_hl());
 	set(cpu, &val, 7);
-	return 3;
+	cpu->mem->write_byte(cpu->read_hl(), val);
+	return 4;
 }
 u8 set7a_FF(Cpu* cpu) {
 	set(cpu, &cpu->reg_a, 7);

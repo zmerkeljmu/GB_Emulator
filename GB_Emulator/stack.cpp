@@ -25,20 +25,21 @@ u8 pophl_E1(Cpu* cpu) {
 }
 u8 popaf_F1(Cpu* cpu) {
 	pop_2reg(cpu, &cpu->reg_a, &cpu->reg_f);
-
-	if (u8read_bit(Z_FLAG, &cpu->reg_f) == 1)
+	u8 temp = cpu->reg_f;
+	cpu->reg_f = 0;
+	if (u8read_bit(Z_FLAG, &temp) == 1)
 		cpu->set_zero_flag();
 	else
 		cpu->clear_zero_flag();
-	if (u8read_bit(S_FLAG, &cpu->reg_f) == 1)
+	if (u8read_bit(S_FLAG, &temp) == 1)
 		cpu->set_s_flag();
 	else
 		cpu->clear_s_flag();
-	if (u8read_bit(H_FLAG, &cpu->reg_f) == 1)
+	if (u8read_bit(H_FLAG, &temp) == 1)
 		cpu->set_hc_flag();
 	else
 		cpu->clear_hc_flag();
-	if (u8read_bit(C_FLAG, &cpu->reg_f) == 1)
+	if (u8read_bit(C_FLAG, &temp) == 1)
 		cpu->set_carry_flag();
 	else
 		cpu->clear_carry_flag();
@@ -75,7 +76,7 @@ u8 addspi8_E8(Cpu* cpu) {
 	i8 value = cpu->read_pc();
 	u16 address = cpu->sp;
 
-	if ((address & 0xFF) + value > 0xFF)
+	if ((address & 0xFF) + (value & 0xFF)> 0xFF)
 		cpu->set_carry_flag();
 	else
 		cpu->clear_carry_flag();
@@ -94,7 +95,7 @@ u8 ldhlspi8_F8(Cpu* cpu) {
 	i8 value = cpu->read_pc();
 	u16 address = cpu->sp;
 
-	if ((address & 0xFF) + value > 0xFF)
+	if (((address & 0xFF) + (value & 0xFF)) > 0xFF)
 		cpu->set_carry_flag();
 	else
 		cpu->clear_carry_flag();

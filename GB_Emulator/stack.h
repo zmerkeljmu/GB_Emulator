@@ -1,5 +1,5 @@
 #pragma once
-#include "instruction.h"
+#include "common.h"
 
 void pop_2reg(Cpu* cpu, u8* high_reg, u8* low_reg);
 
@@ -17,3 +17,4 @@ u8 pushaf_F5(Cpu* cpu);
 
 u8 addspi8_E8(Cpu* cpu);
 u8 ldhlspi8_F8(Cpu* cpu);
+

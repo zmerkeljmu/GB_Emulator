@@ -51,16 +51,10 @@
     <ClCompile Include="stack.cpp">
       <Filter>Source Files\instructions</Filter>
     </ClCompile>
-    <ClCompile Include="jump_subroutine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="bits.cpp">
       <Filter>Source Files\instructions</Filter>
     </ClCompile>
-    <ClCompile Include="misc.cpp">
-      <Filter>Source Files\instructions</Filter>
-    </ClCompile>
-    <ClCompile Include="misc.h">
+    <ClCompile Include="misc_inst.cpp">
       <Filter>Source Files\instructions</Filter>
     </ClCompile>
     <ClCompile Include="bit_flag.cpp">
@@ -68,6 +62,9 @@
     </ClCompile>
     <ClCompile Include="bit_shift.cpp">
       <Filter>Source Files\CB</Filter>
+    </ClCompile>
+    <ClCompile Include="jump_subroutine.cpp">
+      <Filter>Source Files\instructions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -112,6 +109,9 @@
     </ClInclude>
     <ClInclude Include="bit_flag.h">
       <Filter>Source Files\CB</Filter>
+    </ClInclude>
+    <ClInclude Include="misc_inst.h">
+      <Filter>Source Files\instructions</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
