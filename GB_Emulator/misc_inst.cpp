@@ -10,14 +10,14 @@ u8 stop_10(Cpu* cpu) {
 }
 
 u8 halt_76(Cpu* cpu) {
-	
-	return 0;
-	
+	cpu->halted = true;
+	return 1;
 }
 
 //requires ime/interrupts
 u8 di_F4(Cpu* cpu) {
-	cpu->ime = 0;
+	cpu->ime = false;
+	cpu->pending_ei = false;
 	return 1;
 }
 

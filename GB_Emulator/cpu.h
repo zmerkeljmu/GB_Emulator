@@ -64,6 +64,15 @@ public :
 	void clear_carry_flag();
 	bool read_carry_flag();
 
+	bool handle_interrupts();
+	bool read_bit_IE(int bit);
+	bool read_bit_IF(int bit);
+	void clear_bit_IF(int bit);
+	void stack_push(u8* reg_from);
+	void push_pc();
+	void bootrom();
+
+
 private:
 	Instruction_list instruction_list;
 };
