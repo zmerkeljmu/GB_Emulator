@@ -8,7 +8,6 @@
 #include <string>
 #include "gameboy.h"
 
-
 void test_json_individual(Cpu* cpu, int hexval, bool cb) {
     using json = nlohmann::json;
     std::string pathname;
@@ -190,7 +189,7 @@ void test_json_individual(Cpu* cpu, int hexval, bool cb) {
 void test_all_json(Cpu* cpu) {
     //test all base instructions
 
-    for (int i = 0x00; i < 256; i++) {
+    for (int i = 0xFC; i < 256; i++) {
         printf("%02x\n", i);
         if (i == 0x10 || i == 0x76) //skip halt and stop for now
             continue;
@@ -222,27 +221,28 @@ void run_blargg_test(std::string filepath) {
 	Cpu* cpu = new Cpu(mem);
     Timer* timer = new Timer(mem);
     Gameboy* gb = new Gameboy(cpu, timer);
-	cpu->debug = false;
+	cpu->debug = true;
     gameloop(gb, false);
 	return;
 }
 
-int main() {
+int tests() {
     
-    
-    std::string filepath = "C:\\Users\\David\\Documents\\CS\\EMU\\tetris.gb";
-    cartridge* cart = new cartridge(filepath);
 
-    cart->print_header_data();
-    Mmu* mem = new Mmu(cart, false);
-    Cpu* cpu = new Cpu(mem);
+    
+    //std::string filepath = "C:\\Users\\David\\Documents\\CS\\EMU\\tetris.gb";
+    //cartridge* cart = new cartridge(filepath);
+
+    //cart->print_header_data();
+    //Mmu* mem = new Mmu(cart, false);
+    //Cpu* cpu = new Cpu(mem);
     
     
-    //std::string filepath = "C:\\Users\\David\\Documents\\CS\\EMU\\gb-test-roms\\cpu_instrs\\individual\\01-special.gb";
+    //std::string filepath = "C:\\Users\\David\\Documents\\CS\\EMU\\gb-test-roms\\cpu_instrs\\source\\02-interrupts.s";
 	//run_blargg_test(filepath);
 
     //test_json_individual(cpu, 0x69, false);
-    test_all_json(cpu);
+    //test_all_json(cpu);
     /*
 
     cpu.print_flags();
@@ -271,6 +271,11 @@ int main() {
 
     */
 
+
+
+
+
+    return 0;
 }
 
 

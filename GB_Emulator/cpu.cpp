@@ -29,8 +29,8 @@ int Cpu::step() {
 	bool set_ime = this->pending_ei;
 	int cycles = 0;
 
-	//if (handle_interrupts())
-		//cycles += 5;
+	if (handle_interrupts())
+		cycles += 5;
 	
 	if (!halted) {
 		//fetch	
@@ -52,6 +52,8 @@ int Cpu::step() {
 	}
 	return cycles;
 }
+
+
 
 instruction Cpu::fetch_instruction() {
 	u8 opcode = this->read_pc();
@@ -275,3 +277,18 @@ void Cpu::bootrom() {
 	mem->write_byte(hardware_reg::DIV, 0xAB);
 	mem->write_byte(hardware_reg::TAC, 0xF8);
 }
+
+const char* Cpu::next_instruction() {
+	u8 opcode = this->mem->read_byte(this->pc);
+	instruction inst;
+	if (!this->cb)
+		inst = instruction_list.base[opcode];
+	else {
+		inst = instruction_list.cb[opcode];
+		this->cb = false;
+	}
+
+	return inst.name;
+
+}
+

@@ -27,7 +27,7 @@ void Timer::do_tima(u16 counter, u16 old_counter) {
 	bool timer_enable = mem->read_bit_reg(hardware_reg::TAC, timer::TIMER_ENABLE);
 
 	//loop for each time the counter has increased
-	for (int i = old_counter + 1; i < counter; i++) {
+	for (u16 i = old_counter + 1; i < counter; i++) {
 		bool bit = bit_select & i;
 		bool and_result = bit && timer_enable;
 
@@ -42,7 +42,7 @@ void Timer::do_tima(u16 counter, u16 old_counter) {
 		}
 
 		//inc tima
-		if (prev_and && !and_result) {
+		if (prev_and && !and_result && timer_enable) {
 			u8 tima = mem->read_byte(hardware_reg::TIMA) + 1;
 			//printf("tima = %d\n", tima);
 			mem->write_byte(hardware_reg::TIMA, tima);
@@ -60,16 +60,16 @@ u32 Timer::get_freq() {
 	switch (tac & 3) //check first 2 bits
 	{
 	case 0:
-		freq = common::CPU_SPEED / 4096; //every 256 m cycles
+		freq = common::CPU_SPEED / 4096; //every 256 m cycles (1024)
 		break;
 	case 1:
-		freq = common::CPU_SPEED / 262144; //every 4 m cycles
+		freq = common::CPU_SPEED / 262144; //every 4 m cycles (16)
 		break;
 	case 2:
-		freq = common::CPU_SPEED / 65536; //every 16 m cycles
+		freq = common::CPU_SPEED / 65536; //every 16 m cycles (64)
 		break;
 	case 3:
-		freq = common::CPU_SPEED / 16384; //every 64 m cycles
+		freq = common::CPU_SPEED / 16384; //every 64 m cycles (256)
 		break;
 	}
 

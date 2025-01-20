@@ -72,6 +72,8 @@ public :
 	void push_pc();
 	void bootrom();
 
+	//debug tools
+	const char* next_instruction();
 
 private:
 	Instruction_list instruction_list;

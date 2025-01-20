@@ -6,8 +6,8 @@ Mmu::Mmu(cartridge* cart, bool testing) : cart(cart), memory_arr{} {
 
 
 u8 Mmu::read_byte(u16 address) {
-	//if (address <= 0x7FFF)
-		//return cart->rom_data[address];
+	if (address <= 0x7FFF)
+		return cart->rom_data[address];
 
 	return memory_arr[address];
 }
@@ -15,13 +15,16 @@ u8 Mmu::read_byte(u16 address) {
 void Mmu::write_byte(u16 address, u8 byte) {
 	if (address == 0xFF01) {
 		printf("%c", byte);
+		memory_arr[address] = byte;
 	}
-
+	
 	if (address == hardware_reg::DIV) {
 		memory_arr[address] = 0;
 		memory_arr[hardware_reg::DIVLOW] = 0;
 		return;
 	}
+	
+	
 	else {
 		memory_arr[address] = byte;
 	

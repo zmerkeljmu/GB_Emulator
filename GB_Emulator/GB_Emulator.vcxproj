@@ -70,6 +70,10 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>C:\Users\David\Documents\CS\EMU\SDL2-devel-2.26.5-VC\SDL2-2.26.5\include;$(ProjectDir)imgui\</IncludePath>
+    <LibraryPath>C:\Program Files %28x86%29\Windows Kits\10\Lib\10.0.22621.0\um\x64;C:\Users\David\Documents\CS\EMU\SDL2-devel-2.26.5-VC\SDL2-2.26.5\lib\x64;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -109,6 +113,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.Lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -136,18 +141,39 @@
     <ClCompile Include="bit_flag.cpp" />
     <ClCompile Include="bit_shift.cpp" />
     <ClCompile Include="gameboy.cpp" />
+    <ClCompile Include="imgui\imgui.cpp" />
+    <ClCompile Include="imgui\imgui_demo.cpp" />
+    <ClCompile Include="imgui\imgui_draw.cpp" />
+    <ClCompile Include="imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="imgui\imgui_impl_sdl2.cpp" />
+    <ClCompile Include="imgui\imgui_tables.cpp" />
+    <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="jump_subroutine.cpp" />
     <ClCompile Include="cart.cpp" />
     <ClCompile Include="common.cpp" />
     <ClCompile Include="cpu.cpp" />
     <ClCompile Include="emu.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="memory.cpp" />
     <ClCompile Include="misc_inst.cpp" />
+    <ClCompile Include="ppu.cpp" />
     <ClCompile Include="tests.cpp" />
+    <ClCompile Include="tile.cpp" />
     <ClCompile Include="timer.cpp" />
     <ClInclude Include="gameboy.h" />
+    <ClInclude Include="imgui\imconfig.h" />
+    <ClInclude Include="imgui\imgui.h" />
+    <ClInclude Include="imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="imgui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="imgui\imgui_impl_sdl2.h" />
+    <ClInclude Include="imgui\imgui_internal.h" />
+    <ClInclude Include="imgui\imstb_rectpack.h" />
+    <ClInclude Include="imgui\imstb_textedit.h" />
+    <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="misc_inst.h" />
     <ClCompile Include="stack.cpp" />
+    <ClInclude Include="ppu.h" />
+    <ClInclude Include="tile.h" />
     <ClInclude Include="timer.h" />
   </ItemGroup>
   <ItemGroup>
