@@ -8,7 +8,10 @@ Mmu::Mmu(cartridge* cart, bool testing) : cart(cart), memory_arr{} {
 u8 Mmu::read_byte(u16 address) {
 	if (address <= 0x7FFF)
 		return cart->rom_data[address];
-
+	if (address == 0xFF44)
+		return 0x90;
+	if (address == 0xFF00)
+		return 0xFF;
 	return memory_arr[address];
 }
 

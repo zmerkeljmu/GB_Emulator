@@ -73,7 +73,7 @@ int main(int, char**)
     SDL_SetHint(SDL_HINT_IME_SHOW_UI, "1");
 #endif
 
-    std::string filepath = "C:\\Users\\David\\Documents\\CS\\EMU\\pokemon_red.gb";
+    std::string filepath = "C:\\Users\\zacha\\OneDrive\\Desktop\\CS\\EMU\\Tetris.gb";
     cartridge* cart = new cartridge(filepath);
     char* title = cart->header->title;
     Mmu* mem = new Mmu(cart, true);
@@ -276,9 +276,8 @@ int main(int, char**)
             ImGui::Text("SP: %d", cpu->sp);
             if (ImGui::Button("Step"))
             {
-                cpu->step();
             }
-
+            cpu->step();
             ImGui::End();
         }
         {
@@ -297,6 +296,7 @@ int main(int, char**)
                 framebuffer[i * 4 + 3] = 255; // Alpha channel
                 
             }
+
             glBindTexture(GL_TEXTURE_2D, textureID);
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, framebuffer);
 

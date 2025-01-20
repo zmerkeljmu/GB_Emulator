@@ -71,8 +71,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\David\Documents\CS\EMU\SDL2-devel-2.26.5-VC\SDL2-2.26.5\include;$(ProjectDir)imgui\</IncludePath>
-    <LibraryPath>C:\Program Files %28x86%29\Windows Kits\10\Lib\10.0.22621.0\um\x64;C:\Users\David\Documents\CS\EMU\SDL2-devel-2.26.5-VC\SDL2-2.26.5\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\zacha\OneDrive\Desktop\CS\EMU\SDL2-2.30.11\include;C:\Users\David\Documents\CS\EMU\SDL2-devel-2.26.5-VC\SDL2-2.26.5\include;$(ProjectDir)imgui\</IncludePath>
+    <LibraryPath>C:\Users\zacha\OneDrive\Desktop\CS\EMU\SDL2-2.30.11\lib\x64;C:\Program Files %28x86%29\Windows Kits\10\Lib\10.0.22621.0\um\x64;C:\Users\David\Documents\CS\EMU\SDL2-devel-2.26.5-VC\SDL2-2.26.5\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -108,7 +108,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\David\Documents\CS\EMU\include\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\zacha\OneDrive\Desktop\CS\EMU\nlohmann\include;C:\Users\David\Documents\CS\EMU\include\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
