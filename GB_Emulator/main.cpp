@@ -11,6 +11,7 @@
 #include "common.h"
 #include <string>
 #include "gameboy.h"
+#include "ppu.h"
 #include "imgui.h"
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_opengl3.h"
@@ -72,12 +73,13 @@ int main(int, char**)
 #ifdef SDL_HINT_IME_SHOW_UI
     SDL_SetHint(SDL_HINT_IME_SHOW_UI, "1");
 #endif
-
-    std::string filepath = "C:\\Users\\zacha\\OneDrive\\Desktop\\CS\\EMU\\Tetris.gb";
-    cartridge* cart = new cartridge(filepath);
+	std::string acid = "C:\\Users\\David\\Documents\\CS\\EMU\\dmg-acid2.gb";
+    std::string filepath = "C:\\Users\\David\\Documents\\CS\\EMU\\gb-test-roms\\cpu_instrs\\individual\\07-jr,jp,call,ret,rst.gb";
+    cartridge* cart = new cartridge(acid);
     char* title = cart->header->title;
     Mmu* mem = new Mmu(cart, true);
     Cpu* cpu = new Cpu(mem);
+    PPU* ppu = new PPU(mem);
     Timer* timer = new Timer(mem);
     Gameboy* gb = new Gameboy(cpu, timer);
 
@@ -172,19 +174,21 @@ int main(int, char**)
     const GLuint height = 192;
 
     // Create an array to hold the pixel data (128x192 resolution with RGBA format)
-    GLubyte framebuffer[width * height * 4]; // 4 bytes per pixel (RGBA)
+    GLuint framebuffer[width * height]; // 4 bytes per pixel (RGBA)
 
     // Fill the framebuffer with blue (R=0, G=0, B=255, A=255)
     for (GLuint i = 0; i < width * height; ++i) {
-        framebuffer[i * 4 + 0] = 0;   // Red channel
-        framebuffer[i * 4 + 1] = 0;   // Green channel
-        framebuffer[i * 4 + 2] = 255; // Blue channel
-        framebuffer[i * 4 + 3] = 255; // Alpha channel
+        RGBA blue = { 0, 0, 255, 255 };
+        memcpy(framebuffer + i, &blue, sizeof(RGBA));
     }
 
     GLuint textureID;
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
 
     // Set texture filtering options
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -193,9 +197,11 @@ int main(int, char**)
     // Create the texture with initial data (using the framebuffer directly)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, framebuffer);
 
-    int red;
-    int green;
-    int blue;
+    
+    Uint32 frame_start_time, frame_end_time, frame_duration;
+    const int TARGET_FPS = 60;
+    const int TARGET_FRAME_TIME_MS = 1000 / TARGET_FPS; // 16.67 ms per frame
+    const int CYCLES_PER_FRAME = 17556;
 
     // Main loop
     bool done = false;
@@ -208,6 +214,8 @@ int main(int, char**)
     while (!done)
 #endif
     {
+		frame_start_time = SDL_GetTicks();
+
         // Poll and handle events (inputs, window resize, etc.)
         // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
         // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
@@ -227,6 +235,9 @@ int main(int, char**)
             SDL_Delay(10);
             continue;
         }
+        int cycles = 0;
+        while (cycles < CYCLES_PER_FRAME)
+            cycles += cpu->step();
 
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
@@ -277,25 +288,14 @@ int main(int, char**)
             if (ImGui::Button("Step"))
             {
             }
-            cpu->step();
+            
             ImGui::End();
         }
         {
             ImGui::Begin("VRAM Viewer");
-            ImGui::Image((ImTextureID)(intptr_t)textureID, ImVec2(width, height));
-            ImGui::SliderInt("red", &red, 0, 255);
-            ImGui::SliderInt("green", &green, 0, 255);
-            ImGui::SliderInt("blue", &blue, 0, 255);
+            ImGui::Image((ImTextureID)(intptr_t)textureID, ImVec2(width * 3, height* 3));
 
-        
-
-            for (GLuint i = 0; i < width * height; ++i) {
-                framebuffer[i * 4 + 0] = red;   // Red channel
-                framebuffer[i * 4 + 1] = green;   // Green channel
-                framebuffer[i * 4 + 2] = blue; // Blue channel
-                framebuffer[i * 4 + 3] = 255; // Alpha channel
-                
-            }
+			ppu->scan_vram(framebuffer);
 
             glBindTexture(GL_TEXTURE_2D, textureID);
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, framebuffer);
@@ -333,6 +333,13 @@ int main(int, char**)
         }
 
         SDL_GL_SwapWindow(window);
+
+        frame_end_time = SDL_GetTicks();
+        frame_duration = frame_end_time - frame_start_time;
+        if (frame_duration < TARGET_FRAME_TIME_MS)
+        {
+            SDL_Delay(TARGET_FRAME_TIME_MS - frame_duration);
+        }
     }
 #ifdef __EMSCRIPTEN__
     EMSCRIPTEN_MAINLOOP_END;

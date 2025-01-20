@@ -48,3 +48,19 @@ void Mmu::set_bit_reg(u16 address, u8 bit, u8 value) {
 	return;
 }
 
+u8 Mmu::raw_read(u16 address) {
+	return memory_arr[address];
+}
+
+tile Mmu::read_tile(u16 address) {
+	tile cur_tile;
+	for (int line = 0; line < 8; line++) {
+		u8 low_byte = raw_read(address + (line * 2));
+		u8 high_byte = raw_read(address + (line * 2) + 1);
+
+		for (int i = 0; i < 8; i++) {
+			cur_tile.data[line][i] = ((high_byte >> (7 - i)) & 1) << 1 | ((low_byte >> (7 - i)) & 1);
+		}
+	}
+	return cur_tile;
+}

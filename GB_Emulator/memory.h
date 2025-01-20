@@ -1,6 +1,7 @@
 #pragma once
 #include "common.h"
 #include "cart.h"
+#include "tile.h"
 
 class Mmu {
 public:
@@ -9,7 +10,8 @@ public:
 	void write_byte(u16 address, u8 byte);
 	bool read_bit_reg(u16 address, u8 bit);
 	void set_bit_reg(u16 address, u8 bit, u8 value);
-
+	u8 raw_read(u16 address);
+	tile read_tile(u16 address);
 
 private:
 	u8 memory_arr[common::memsize];

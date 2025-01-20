@@ -50,3 +50,22 @@ void u8set_bit(u8 bit,u8* reg, u8 value);
 bool u8read_bit(u8 bit, u8* reg);
 
 bool u16read_bit(u8 bit, u16* reg);
+
+struct RGBA {
+	u8 r;
+	u8 g;
+	u8 b;
+	u8 a;
+};
+
+const RGBA white = { 0x9B, 0XBC, 0X0F, 255 };
+const RGBA light_gray = { 0x8B, 0xAC, 0x0F, 255 };
+const RGBA dark_gray = { 0x30, 0x62, 0x30, 255 };
+const RGBA black = { 0x0F, 0x38, 0x0F, 255 };
+
+enum pixels {
+	WHITE = 0,
+	LIGHT_GRAY = 1,
+	DARK_GRAY = 2,
+	BLACK = 3
+};
