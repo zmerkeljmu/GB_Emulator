@@ -15,6 +15,28 @@ Add the window
 Add sprites
 */
 
+/*
+Each frame is 70224 T cycles long and contains 154 scanlines.
+One scacline takes 456 T cycles to complete a frame. Each mode takes the following number of T cycles to complete:
+
+Mode 2
+OAM scan
+80 cycles
+
+Mode 3
+Drawing pixels
+172–289 cycles
+
+Mode 0
+Horizontal blank
+87–204 cycles
+
+Mode 1
+Vertical blank
+10 "scanlines"
+4560 dots
+*/
+
 
 
 PPU::PPU(Mmu* mmu) {
@@ -56,18 +78,12 @@ void PPU::scan_vram(GLuint* framebuffer) {
                     break;
                 }
                 framebuffer[pixel_offset] = color;
-
             }
         }
-
-        
-
         column++;
         if (column > 15) {
             column = 0;
             row++;
         }
-    
     }
-
 }

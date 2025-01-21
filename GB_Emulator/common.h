@@ -69,3 +69,23 @@ enum pixels {
 	DARK_GRAY = 2,
 	BLACK = 3
 };
+
+enum lcdc {
+	PPU_ENABLE = 7,
+	WIN_TILE_MAP = 6,
+	WIN_ENABLE = 5,
+	TILE_DATA = 4,
+	BG_TILE_MAP = 3,
+	OBJ_SIZE = 2,
+	OBJ_ENABLE = 1,
+	BG_ENABLE = 0
+};
+
+enum stat_reg {
+	LYC_INT = 6,
+	MODE_2 = 5,
+	MODE_1 = 4,
+	MODE_0 = 3,
+	LYC_LY = 2,
+	//ppu mode takes up lower 2 bits
+};

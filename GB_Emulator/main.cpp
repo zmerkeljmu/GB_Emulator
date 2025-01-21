@@ -73,12 +73,14 @@ int main(int, char**)
 #ifdef SDL_HINT_IME_SHOW_UI
     SDL_SetHint(SDL_HINT_IME_SHOW_UI, "1");
 #endif
+	std::string tetris = "C:\\Users\\David\\Documents\\CS\\EMU\\tetris.gb";
 	std::string acid = "C:\\Users\\David\\Documents\\CS\\EMU\\dmg-acid2.gb";
     std::string filepath = "C:\\Users\\David\\Documents\\CS\\EMU\\gb-test-roms\\cpu_instrs\\individual\\07-jr,jp,call,ret,rst.gb";
-    cartridge* cart = new cartridge(acid);
+    cartridge* cart = new cartridge(tetris);
     char* title = cart->header->title;
     Mmu* mem = new Mmu(cart, true);
     Cpu* cpu = new Cpu(mem);
+    cpu->debug = true;
     PPU* ppu = new PPU(mem);
     Timer* timer = new Timer(mem);
     Gameboy* gb = new Gameboy(cpu, timer);
@@ -236,8 +238,12 @@ int main(int, char**)
             continue;
         }
         int cycles = 0;
-        while (cycles < CYCLES_PER_FRAME)
-            cycles += cpu->step();
+        int count = 0;
+        while (cycles < CYCLES_PER_FRAME) {
+            count = cpu->step();
+            timer->tick(count);
+            cycles += count;
+        }
 
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
@@ -334,12 +340,15 @@ int main(int, char**)
 
         SDL_GL_SwapWindow(window);
 
+        /*
         frame_end_time = SDL_GetTicks();
         frame_duration = frame_end_time - frame_start_time;
         if (frame_duration < TARGET_FRAME_TIME_MS)
         {
             SDL_Delay(TARGET_FRAME_TIME_MS - frame_duration);
         }
+        
+        */
     }
 #ifdef __EMSCRIPTEN__
     EMSCRIPTEN_MAINLOOP_END;
