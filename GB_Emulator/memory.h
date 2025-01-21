@@ -12,6 +12,7 @@ public:
 	void set_bit_reg(u16 address, u8 bit, u8 value);
 	u8 raw_read(u16 address);
 	tile read_tile(u16 address);
+	u8 read_ppu_mode();
 
 private:
 	u8 memory_arr[common::memsize];

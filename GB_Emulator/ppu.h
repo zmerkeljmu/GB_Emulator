@@ -4,7 +4,7 @@
 #include "tile.h"
 #include <SDL_opengl.h>
 
-enum class State {
+enum State {
 	HBLANK = 0,
 	VBLANK = 1,
 	OAM_SEARCH = 2,
@@ -16,9 +16,11 @@ public:
 	PPU(Mmu* mmu);
 	Mmu* mmu;
 	void scan_vram(GLuint* framebuffer);
+	void tick(u32 cycles);
 
 private:
 	State state = State::HBLANK;
+
 };
 
 

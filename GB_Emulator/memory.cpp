@@ -64,3 +64,8 @@ tile Mmu::read_tile(u16 address) {
 	}
 	return cur_tile;
 }
+
+u8 Mmu::read_ppu_mode() {
+	u8 stat = raw_read(hardware_reg::STAT);
+	return stat & 0b11;
+}

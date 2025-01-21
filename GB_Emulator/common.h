@@ -89,3 +89,8 @@ enum stat_reg {
 	LYC_LY = 2,
 	//ppu mode takes up lower 2 bits
 };
+
+const int OAM_CYCLES = 80;
+const int PIXEL_CYCLES = 172;
+const int HBLANK_CYCLES = 204;
+const int VBLANK_CYCLES = 4560;

@@ -73,14 +73,15 @@ int main(int, char**)
 #ifdef SDL_HINT_IME_SHOW_UI
     SDL_SetHint(SDL_HINT_IME_SHOW_UI, "1");
 #endif
+	std::string acid_laptop = "C:\\Users\\zacha\\OneDrive\\Desktop\\CS\\EMU\\dmg-acid2.gb";
 	std::string tetris = "C:\\Users\\David\\Documents\\CS\\EMU\\tetris.gb";
 	std::string acid = "C:\\Users\\David\\Documents\\CS\\EMU\\dmg-acid2.gb";
     std::string filepath = "C:\\Users\\David\\Documents\\CS\\EMU\\gb-test-roms\\cpu_instrs\\individual\\07-jr,jp,call,ret,rst.gb";
-    cartridge* cart = new cartridge(tetris);
+    cartridge* cart = new cartridge(acid_laptop);
     char* title = cart->header->title;
     Mmu* mem = new Mmu(cart, true);
     Cpu* cpu = new Cpu(mem);
-    cpu->debug = true;
+    cpu->debug = false;
     PPU* ppu = new PPU(mem);
     Timer* timer = new Timer(mem);
     Gameboy* gb = new Gameboy(cpu, timer);
@@ -192,18 +193,15 @@ int main(int, char**)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 
-    // Set texture filtering options
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     // Create the texture with initial data (using the framebuffer directly)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, framebuffer);
 
     
     Uint32 frame_start_time, frame_end_time, frame_duration;
-    const int TARGET_FPS = 60;
-    const int TARGET_FRAME_TIME_MS = 1000 / TARGET_FPS; // 16.67 ms per frame
     const int CYCLES_PER_FRAME = 17556;
+    const int TARGET_FPS = common::CPU_SPEED / CYCLES_PER_FRAME;
+    const int TARGET_FRAME_TIME_MS = 1000 / TARGET_FPS; 
 
     // Main loop
     bool done = false;

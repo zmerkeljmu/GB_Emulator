@@ -37,11 +37,95 @@ Vertical blank
 4560 dots
 */
 
+/*
 
+My plan for PPU
+
+keep track of how many cycles are left in the current mode
+when ppu tick is called check state and then call function for that state
+in that state function subtract number of cycles from remaining cycles, if that number will hit 0 or go below 0 change state and run next state function (making sure to carry over the extra cycles from the previous state)
+
+*/
 
 PPU::PPU(Mmu* mmu) {
 	this->mmu = mmu;
 }
+
+void PPU::tick(u32 cycles) {
+    
+    if (!mmu->read_bit_reg(hardware_reg::LCDC, lcdc::PPU_ENABLE))
+        return;
+
+
+    u8 state = mmu->read_ppu_mode();
+
+    switch (state)
+    {
+    case State::HBLANK:
+        break;
+    case State::OAM_SEARCH:
+        break;
+    case State::PIXEL_TRANSFER:
+        break;
+    case State::VBLANK:
+        break;
+    default:
+        exit(0);
+        break;
+    }
+}
+
+/*
+
+void PPU::handle_hblank() {
+
+}
+
+void PPU::handle_oam_search() {}
+
+void PPU::handle_pixel_transfer() {}
+
+void PPU::handle_vblank() {}
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*
 const GLuint width = 128;
 const GLuint height = 192;
