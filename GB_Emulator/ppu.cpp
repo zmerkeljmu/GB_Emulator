@@ -54,8 +54,6 @@ PPU::PPU(Mmu* mmu) {
 void PPU::tick(u32 cycles) {
     
     u32 tcycles = cycles * 4;
-    ly = mmu->read_byte(hardware_reg::LY);
-    lyc = mmu->read_byte(hardware_reg::LYC);
 
     if (!mmu->read_bit_reg(hardware_reg::LCDC, lcdc::PPU_ENABLE))
         return;
@@ -141,12 +139,57 @@ void PPU::exit_vblank() {
 }
 
 
+//functions called by the mmu for io register reads
+void PPU::write_lyc(u8 byte) {
+    lyc = byte;
+}
+u8 PPU::read_ly() {
+    return ly;
+}
+u8 PPU::read_lyc() {
+    return lyc;
+}
+u8 PPU::read_lcdc() {
+    return lcdc;
+}
+void PPU::write_lcdc(u8 byte) {
+    lcdc = byte;
+}
+u8 PPU::read_scy() {
+    return scy;
+}
+void PPU::write_scy(u8 byte) {
+    scy = byte;
+}
+u8 PPU::read_scx() {
+    return scx;
+}
+void PPU::write_scx(u8 byte) {
+    scx = byte;
+}
+u8 PPU::read_bgp() {
+    return bgp;
+}
+void PPU::write_bgp(u8 byte) {
+    bgp = byte;
+}
 
+//blocking needs to be implemented
+u8 PPU::read_vram(u16 address) {
+    return vram[address - VRAM_START];
+}
 
+void PPU::write_vram(u16 address, u8 byte) {
+    vram[address - VRAM_START] = byte;
+}
 
+u8 PPU::read_oam_ram(u16 address) {
+    return oam_ram[address - OAM_START];
+}
 
-
-
+void PPU::write_oam_ram(u16 address, u8 byte) {
+    oam_ram[address - OAM_START] = byte;
+}
 
 
 

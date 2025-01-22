@@ -77,14 +77,14 @@ int main(int, char**)
 	std::string tetris = "C:\\Users\\David\\Documents\\CS\\EMU\\tetris.gb";
 	std::string acid = "C:\\Users\\David\\Documents\\CS\\EMU\\dmg-acid2.gb";
     std::string filepath = "C:\\Users\\David\\Documents\\CS\\EMU\\gb-test-roms\\cpu_instrs\\individual\\07-jr,jp,call,ret,rst.gb";
-    cartridge* cart = new cartridge(tetris);
+    cartridge* cart = new cartridge(acid_laptop);
     char* title = cart->header->title;
     Mmu* mem = new Mmu(cart, true);
     Cpu* cpu = new Cpu(mem);
     cpu->debug = false;
     PPU* ppu = new PPU(mem);
     Timer* timer = new Timer(mem);
-    Gameboy* gb = new Gameboy(cpu, timer);
+    Gameboy* gb = new Gameboy(cpu, timer, ppu);
 
     u8* reg_a_point = &cpu->reg_a;
     u8* reg_b_point = &cpu->reg_b;

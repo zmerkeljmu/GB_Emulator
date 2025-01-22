@@ -219,8 +219,9 @@ void run_blargg_test(std::string filepath) {
     cartridge* cart = new cartridge(filepath);
 	Mmu* mem = new Mmu(cart, true);
 	Cpu* cpu = new Cpu(mem);
+    PPU* ppu = new PPU(mem);
     Timer* timer = new Timer(mem);
-    Gameboy* gb = new Gameboy(cpu, timer);
+    Gameboy* gb = new Gameboy(cpu, timer, ppu);
 	cpu->debug = true;
     gameloop(gb, false);
 	return;

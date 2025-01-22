@@ -1,4 +1,5 @@
 #include "memory.h"
+#include "ppu.h"
 
 Mmu::Mmu(cartridge* cart, bool testing) : cart(cart), memory_arr{} {
 	Mmu::testing = testing;
@@ -16,22 +17,16 @@ u8 Mmu::read_byte(u16 address) {
 void Mmu::write_byte(u16 address, u8 byte) {
 	if (address == 0xFF01) {
 		printf("%c", byte);
-		memory_arr[address] = byte;
 	}
-	
 	if (address == hardware_reg::DIV) {
 		memory_arr[address] = 0;
 		memory_arr[hardware_reg::DIVLOW] = 0;
 		return;
 	}
-	
-	
 	else {
 		memory_arr[address] = byte;
-	
 	}
 
-	return;
 }
 
 bool Mmu::read_bit_reg(u16 address, u8 bit) {
@@ -73,4 +68,8 @@ void Mmu::write_ppu_mode(u8 state) {
 	stat &= 0b11111100;
 	stat |= state;
 	write_byte(hardware_reg::STAT, stat);
+}
+
+void Mmu::set_ppu(PPU* ppu) {
+	this->ppu = ppu;
 }
