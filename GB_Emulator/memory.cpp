@@ -8,8 +8,6 @@ Mmu::Mmu(cartridge* cart, bool testing) : cart(cart), memory_arr{} {
 u8 Mmu::read_byte(u16 address) {
 	if (address <= 0x7FFF)
 		return cart->rom_data[address];
-	if (address == 0xFF44)
-		return 0x90;
 	if (address == 0xFF00)
 		return 0xFF;
 	return memory_arr[address];
@@ -68,4 +66,11 @@ tile Mmu::read_tile(u16 address) {
 u8 Mmu::read_ppu_mode() {
 	u8 stat = raw_read(hardware_reg::STAT);
 	return stat & 0b11;
+}
+
+void Mmu::write_ppu_mode(u8 state) {
+	u8 stat = raw_read(hardware_reg::STAT);
+	stat &= 0b11111100;
+	stat |= state;
+	write_byte(hardware_reg::STAT, stat);
 }

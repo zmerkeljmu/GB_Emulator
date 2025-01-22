@@ -1,0 +1,2 @@
+Refactor to use a bus so that io registers are stored in ppu rather than in memory
+Render tilemap

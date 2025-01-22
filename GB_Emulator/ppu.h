@@ -19,7 +19,28 @@ public:
 	void tick(u32 cycles);
 
 private:
-	State state = State::HBLANK;
+	u8 cur_state = State::HBLANK;
+	u32 cycles_remaining = 0;
+	u8 ly = 0;
+	u8 lyc = 0;
+	u8 vblank_remaining = 0;
+	bool ppu_started = false;
+	void to_hblank(u32 tcycle_overflow);
+
+	void to_oam_search(u32 tcycle_overflow);
+
+	void to_pixel_transfer(u32 tcycle_overflow);
+
+	void to_vblank(u32 tcycle_overflow);
+	void exit_vblank();
+
+	bool cur_stat = false;
+	bool prev_stat = false;
+
+
+	void check_stat();
+	void render_tilemap() {
+
 
 };
 

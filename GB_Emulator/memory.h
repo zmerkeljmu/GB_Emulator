@@ -13,6 +13,8 @@ public:
 	u8 raw_read(u16 address);
 	tile read_tile(u16 address);
 	u8 read_ppu_mode();
+	void write_ppu_mode(u8 state);
+
 
 private:
 	u8 memory_arr[common::memsize];

@@ -1,5 +1,5 @@
 #include "ppu.h"
-
+#include <iostream>
 /* 
 Make a state machine that cycles through the lines and 4 modes after the correct number of cycles
 Make a framebuffer that can be rendered. Maybe add video sync and/or double buffering
@@ -53,41 +53,92 @@ PPU::PPU(Mmu* mmu) {
 
 void PPU::tick(u32 cycles) {
     
+    u32 tcycles = cycles * 4;
+    ly = mmu->read_byte(hardware_reg::LY);
+    lyc = mmu->read_byte(hardware_reg::LYC);
+
     if (!mmu->read_bit_reg(hardware_reg::LCDC, lcdc::PPU_ENABLE))
         return;
 
+    if (!ppu_started) {
+        ppu_started = true;
+        cycles_remaining = HBLANK_CYCLES;
+    }
 
-    u8 state = mmu->read_ppu_mode();
+    if (tcycles >= cycles_remaining) {
+        cur_state = mmu->read_ppu_mode();
+        u32 overflow = tcycles - cycles_remaining;
 
-    switch (state)
-    {
-    case State::HBLANK:
-        break;
-    case State::OAM_SEARCH:
-        break;
-    case State::PIXEL_TRANSFER:
-        break;
-    case State::VBLANK:
-        break;
-    default:
-        exit(0);
-        break;
+        switch (cur_state)
+        {
+        case State::HBLANK:
+            if (ly == 143) {
+                vblank_remaining = 10;
+                to_vblank(overflow);
+            }
+            else
+                to_oam_search(overflow);
+            break;
+        case State::OAM_SEARCH:
+            to_pixel_transfer(overflow);
+            break;
+        case State::PIXEL_TRANSFER:
+            to_hblank(overflow);
+            break;
+        case State::VBLANK: 
+            if (vblank_remaining > 1) {
+                vblank_remaining--;
+                to_vblank(overflow);
+            }
+            else {
+                exit_vblank();
+                to_oam_search(overflow);
+            }
+            break;
+        default:
+            exit(0);
+            break;
+        }
+    }
+    else {
+        cycles_remaining -= tcycles;
     }
 }
 
-/*
-
-void PPU::handle_hblank() {
-
+//tranistion to hblank
+void PPU::to_hblank(u32 tcycle_overflow) {
+    cycles_remaining = HBLANK_CYCLES - tcycle_overflow;
+    mmu->write_ppu_mode(HBLANK);
 }
 
-void PPU::handle_oam_search() {}
+//transition to OAM search
+void PPU::to_oam_search(u32 tcycle_overflow) {
+    cycles_remaining = OAM_CYCLES - tcycle_overflow;
+    mmu->write_ppu_mode(OAM_SEARCH);
+    ly++;
+    mmu->write_byte(hardware_reg::LY, ly);
+}
 
-void PPU::handle_pixel_transfer() {}
+//transition to pixel transfer
+void PPU::to_pixel_transfer(u32 tcycle_overflow) {
+    cycles_remaining = PIXEL_CYCLES - tcycle_overflow;
+    mmu->write_ppu_mode(PIXEL_TRANSFER);
+}
 
-void PPU::handle_vblank() {}
-*/
+//transition to vblank
+void PPU::to_vblank(u32 tcycle_overflow) {
+    cycles_remaining = VBLANK_CYCLES - tcycle_overflow;
+    mmu->write_ppu_mode(VBLANK);
+    ly++;
 
+    mmu->write_byte(hardware_reg::LY, ly);
+}
+
+void PPU::exit_vblank() {
+    ly = 0;
+    if (ly == lyc)
+    mmu->write_byte(hardware_reg::LY, ly);
+}
 
 
 
@@ -131,7 +182,7 @@ const GLuint width = 128;
 const GLuint height = 192;
 */
 void PPU::scan_vram(GLuint* framebuffer) {
-	tile tiles[384];
+	tile* tiles = new tile[384];
     
 	for (int i = 0; i < 384; i++) {
 		u16 address = 0x8000 + (16 * i);
@@ -170,4 +221,11 @@ void PPU::scan_vram(GLuint* framebuffer) {
             row++;
         }
     }
+}
+
+
+void PPU::render_tilemap() {
+    
+
+
 }

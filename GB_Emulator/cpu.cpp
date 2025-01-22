@@ -273,9 +273,25 @@ void Cpu::push_pc() {
 }
 
 void Cpu::bootrom() {
-	mem->write_byte(hardware_reg::IF, 0xE1);
+	mem->write_byte(hardware_reg::JOYP, 0xCF);
+	mem->write_byte(hardware_reg::SB, 0x00);
+	mem->write_byte(hardware_reg::SC, 0x7E);
 	mem->write_byte(hardware_reg::DIV, 0xAB);
+	mem->write_byte(hardware_reg::TIMA, 0x00);
+	mem->write_byte(hardware_reg::TMA, 0x00);
 	mem->write_byte(hardware_reg::TAC, 0xF8);
+	mem->write_byte(hardware_reg::IF, 0xE1);
+	mem->write_byte(hardware_reg::LCDC, 0x91);
+	mem->write_byte(hardware_reg::STAT, 0x85);
+	mem->write_byte(hardware_reg::SCY, 0x00);
+	mem->write_byte(hardware_reg::SCX, 0x00);
+	mem->write_byte(hardware_reg::LY, 0x00);
+	mem->write_byte(hardware_reg::LYC, 0x00);
+	mem->write_byte(hardware_reg::DMA, 0xFF);
+	mem->write_byte(hardware_reg::BGP, 0xFC);
+	mem->write_byte(hardware_reg::WY, 0x00);
+	mem->write_byte(hardware_reg::WX, 0x00);
+
 }
 
 const char* Cpu::next_instruction() {
