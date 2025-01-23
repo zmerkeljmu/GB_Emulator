@@ -72,10 +72,19 @@ public :
 	void push_pc();
 	void bootrom();
 
+	u8 read_ie();
+	u8 read_if();
+
+	void write_ie(u8 byte);
+	void write_if(u8 byte);
+
+
 	//debug tools
 	const char* next_instruction();
 
 private:
 	Instruction_list instruction_list;
+	u8 ie_reg = 0;
+	u8 if_reg = 0xE1;
 };
 

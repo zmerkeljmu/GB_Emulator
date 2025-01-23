@@ -26,10 +26,16 @@ class cartridge {
 
 public:
 	rom_header *header;
-	char *rom_data;
 	
 	cartridge(std::string filename);
 
+	u8 read_rom(u16 address);
+
+	u8 read_external_ram(u16 address);
+	void write_external_ram(u16 address, u8 byte);
 	void print_header_data();
+private:
+	char rom_data[0x7FFF];
+	u8 external_ram[EXTERNAL_END - EXTERNAL_START];
 };
 

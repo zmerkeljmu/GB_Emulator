@@ -165,7 +165,6 @@
     <ClCompile Include="tests.cpp" />
     <ClCompile Include="tile.cpp" />
     <ClCompile Include="timer.cpp" />
-    <ClInclude Include="bus.h" />
     <ClInclude Include="gameboy.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />

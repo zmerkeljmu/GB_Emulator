@@ -47,7 +47,7 @@ in that state function subtract number of cycles from remaining cycles, if that 
 
 */
 
-PPU::PPU(Mmu* mmu) {
+PPU::PPU(Mmu* mmu) : oam_ram{}, vram{} {
 	this->mmu = mmu;
 }
 
@@ -64,7 +64,7 @@ void PPU::tick(u32 cycles) {
     }
 
     if (tcycles >= cycles_remaining) {
-        cur_state = mmu->read_ppu_mode();
+        cur_state = read_ppu_mode();
         u32 overflow = tcycles - cycles_remaining;
 
         switch (cur_state)
@@ -106,13 +106,13 @@ void PPU::tick(u32 cycles) {
 //tranistion to hblank
 void PPU::to_hblank(u32 tcycle_overflow) {
     cycles_remaining = HBLANK_CYCLES - tcycle_overflow;
-    mmu->write_ppu_mode(HBLANK);
+    write_ppu_mode(HBLANK);
 }
 
 //transition to OAM search
 void PPU::to_oam_search(u32 tcycle_overflow) {
     cycles_remaining = OAM_CYCLES - tcycle_overflow;
-    mmu->write_ppu_mode(OAM_SEARCH);
+    write_ppu_mode(OAM_SEARCH);
     ly++;
     mmu->write_byte(hardware_reg::LY, ly);
 }
@@ -120,13 +120,13 @@ void PPU::to_oam_search(u32 tcycle_overflow) {
 //transition to pixel transfer
 void PPU::to_pixel_transfer(u32 tcycle_overflow) {
     cycles_remaining = PIXEL_CYCLES - tcycle_overflow;
-    mmu->write_ppu_mode(PIXEL_TRANSFER);
+    write_ppu_mode(PIXEL_TRANSFER);
 }
 
 //transition to vblank
 void PPU::to_vblank(u32 tcycle_overflow) {
     cycles_remaining = VBLANK_CYCLES - tcycle_overflow;
-    mmu->write_ppu_mode(VBLANK);
+    write_ppu_mode(VBLANK);
     ly++;
 
     mmu->write_byte(hardware_reg::LY, ly);
@@ -173,6 +173,40 @@ u8 PPU::read_bgp() {
 void PPU::write_bgp(u8 byte) {
     bgp = byte;
 }
+u8 PPU::read_obp0() {
+    return obp0;
+}
+void PPU::write_obp0(u8 byte) {
+	obp0 = byte;
+}
+u8 PPU::read_obp1() {
+	return obp1;
+}
+void PPU::write_obp1(u8 byte) {
+	obp1 = byte;
+}
+u8 PPU::read_wy() {
+	return wy;
+}
+void PPU::write_wy(u8 byte) {
+	wy = byte;
+}
+u8 PPU::read_wx() {
+	return wx;
+}
+void PPU::write_wx(u8 byte) {
+	wx = byte;
+}
+
+
+u8 PPU::read_stat() {
+    return stat;
+}
+//needs to be updated because register is mixed read/write
+void PPU::write_stat(u8 byte) {
+    stat = byte;
+}
+
 
 //blocking needs to be implemented
 u8 PPU::read_vram(u16 address) {
@@ -191,6 +225,14 @@ void PPU::write_oam_ram(u16 address, u8 byte) {
     oam_ram[address - OAM_START] = byte;
 }
 
+u8 PPU::read_ppu_mode() {
+    return stat & 0b11;
+}
+
+void PPU::write_ppu_mode(u8 state) {
+    stat &= 0b11111100;
+    stat |= state;
+}
 
 
 
@@ -216,9 +258,18 @@ void PPU::write_oam_ram(u16 address, u8 byte) {
 
 
 
+tile PPU::read_tile(u16 address) {
+    tile cur_tile;
+    for (int line = 0; line < 8; line++) {
+        u8 low_byte = read_vram(address + (line * 2));
+        u8 high_byte = read_vram(address + (line * 2) + 1);
 
-
-
+        for (int i = 0; i < 8; i++) {
+            cur_tile.data[line][i] = ((high_byte >> (7 - i)) & 1) << 1 | ((low_byte >> (7 - i)) & 1);
+        }
+    }
+    return cur_tile;
+}
 
 /*
 const GLuint width = 128;
@@ -229,7 +280,7 @@ void PPU::scan_vram(GLuint* framebuffer) {
     
 	for (int i = 0; i < 384; i++) {
 		u16 address = 0x8000 + (16 * i);
-        tiles[i] = this->mmu->read_tile(address);
+        tiles[i] = read_tile(address);
 	}
     int row = 0;
     int column = 0;

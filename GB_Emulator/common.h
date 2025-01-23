@@ -140,7 +140,17 @@ namespace hardware_reg {
 	};
 }
 
+const u16 ROM_END = 0x7FFF;
 const u16 VRAM_START = 0x8000;
 const u16 VRAM_END = 0x9FFF;
 const u16 OAM_START = 0xFE00;
 const u16 OAM_END = 0xFE9F;
+const u16 WRAM_START = 0xC000;
+const u16 WRAM_END = 0xDFFF;
+const u16 HRAM_START = 0xFF80;
+const u16 HRAM_END = 0xFFFE;
+const u16 EXTERNAL_START = 0xA000;
+const u16 EXTERNAL_END = 0xBFFF;
+const u16 ECHO_START = 0xE000;
+const u16 ECHO_END = 0xFDFF;
+const u16 IO_END = 0xFF7F;

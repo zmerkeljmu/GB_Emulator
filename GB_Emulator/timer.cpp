@@ -7,24 +7,18 @@ Timer::Timer(Mmu* memory) {
 
 //cycles here are m cycles
 void Timer::tick(u8 cycles) {
-	u16 old_counter = (mem->read_byte(hardware_reg::DIV) << 8) | (mem->read_byte(hardware_reg::DIVLOW));
-	u16 counter = old_counter;
+	counter = old_counter;
 	counter +=  cycles * 4; //converted to t cycles
-	
-	u8 high = (u8) (counter >> 8);
-	u8 low = counter & 0xFF;
-	mem->write_byte(hardware_reg::DIV, high);
-	mem->write_byte(hardware_reg::DIVLOW, low);
-
-	do_tima(counter, old_counter);
+	div = counter >> 8;
+	do_tima();
 	return;
 }
 
-void Timer::do_tima(u16 counter, u16 old_counter) {
+void Timer::do_tima() {
 
 	u32 freq = get_freq();
 	u16 bit_select = freq >> 1;
-	bool timer_enable = mem->read_bit_reg(hardware_reg::TAC, timer::TIMER_ENABLE);
+	bool timer_enable = u8read_bit(timer::TIMER_ENABLE, &tac);
 
 	//loop for each time the counter has increased
 	for (u16 i = old_counter + 1; i < counter; i++) {
@@ -34,18 +28,16 @@ void Timer::do_tima(u16 counter, u16 old_counter) {
 		if (overflow) {
 			//std::cout << "TIMER OVERFLOW\n";
 			overflow = false;
-			mem->write_byte(hardware_reg::TIMA, mem->read_byte(hardware_reg::TMA));
+			tima = tma;
 			mem->set_bit_reg(hardware_reg::IF, interrupt::TIMER, 1);
 			//printf("%x\n", mem->read_byte(hardware_reg::IF));
 			//printf("%x\n", mem->read_byte(hardware_reg::IE));
 
 		}
-
 		//inc tima
 		if (prev_and && !and_result && timer_enable) {
-			u8 tima = mem->read_byte(hardware_reg::TIMA) + 1;
+			tima++;
 			//printf("tima = %d\n", tima);
-			mem->write_byte(hardware_reg::TIMA, tima);
 			overflow = tima == 0;
 		}
 		prev_and = and_result;
@@ -75,4 +67,30 @@ u32 Timer::get_freq() {
 
 	return freq;
 
+}
+
+u8 Timer:: read_tima() {
+	return tima;
+}
+void Timer:: write_tima(u8 byte) {
+	tima = byte;
+}
+u8 Timer:: read_tma() {
+	return tma;
+}
+void Timer:: write_tma(u8 byte) {
+	tma = byte;
+}
+u8 Timer:: read_div() {
+	return div;
+}
+void Timer:: write_div(u8 byte) {
+	div = 0;
+	counter = 0;
+}
+u8 Timer:: read_tac() {
+	return tac;
+}
+void Timer::write_tac(u8 byte) {
+	tac = byte;
 }

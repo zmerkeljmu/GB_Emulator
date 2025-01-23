@@ -22,8 +22,6 @@ cartridge::cartridge(std::string file_name) {
 	file_size = rom_file.tellg();
 	rom_file.seekg(0, std::ios::beg);
 
-	cartridge::rom_data = new char[file_size];
-
 	std::cout << "File size: " << file_size << std::endl;
 	
 	rom_file.read(rom_data, file_size);
@@ -41,6 +39,16 @@ void cartridge::print_header_data() {
 	printf("Title: %s\n", header->title);
 }
 
+u8 cartridge::read_rom(u16 address) {
+	return rom_data[address];
+}
 
+u8 cartridge::read_external_ram(u16 address) {
+	return external_ram[address - EXTERNAL_START];
+}
+
+void cartridge::write_external_ram(u16 address, u8 byte) {
+	external_ram[address - EXTERNAL_START] = byte;
+}
 
 

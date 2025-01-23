@@ -241,21 +241,15 @@ bool Cpu::handle_interrupts() {
 }
 
 bool Cpu::read_bit_IE(int bit) {
-	u8 ie_reg = this->mem->read_byte(hardware_reg::IE);
 	return u8read_bit(bit, &ie_reg);
 }
 
-
 bool Cpu::read_bit_IF(int bit) {
-	u8 if_reg = this->mem->read_byte(hardware_reg::IF);
 	return u8read_bit(bit, &if_reg);
 }
 
 void Cpu::clear_bit_IF(int bit) {
-	u8 if_reg = this->mem->read_byte(hardware_reg::IF);
 	u8set_bit(bit, &if_reg, 0);
-	this->mem->write_byte(hardware_reg::IF, if_reg);
-	return;
 }
 
 void Cpu::stack_push(u8* reg_from) {
@@ -276,35 +270,21 @@ void Cpu::bootrom() {
 	mem->write_byte(hardware_reg::JOYP, 0xCF);
 	mem->write_byte(hardware_reg::SB, 0x00);
 	mem->write_byte(hardware_reg::SC, 0x7E);
-	mem->write_byte(hardware_reg::DIV, 0xAB);
-	mem->write_byte(hardware_reg::TIMA, 0x00);
-	mem->write_byte(hardware_reg::TMA, 0x00);
-	mem->write_byte(hardware_reg::TAC, 0xF8);
-	mem->write_byte(hardware_reg::IF, 0xE1);
-	mem->write_byte(hardware_reg::LCDC, 0x91);
-	mem->write_byte(hardware_reg::STAT, 0x85);
-	mem->write_byte(hardware_reg::SCY, 0x00);
-	mem->write_byte(hardware_reg::SCX, 0x00);
-	mem->write_byte(hardware_reg::LY, 0x00);
-	mem->write_byte(hardware_reg::LYC, 0x00);
 	mem->write_byte(hardware_reg::DMA, 0xFF);
-	mem->write_byte(hardware_reg::BGP, 0xFC);
-	mem->write_byte(hardware_reg::WY, 0x00);
-	mem->write_byte(hardware_reg::WX, 0x00);
 
 }
 
-const char* Cpu::next_instruction() {
-	u8 opcode = this->mem->read_byte(this->pc);
-	instruction inst;
-	if (!this->cb)
-		inst = instruction_list.base[opcode];
-	else {
-		inst = instruction_list.cb[opcode];
-		this->cb = false;
-	}
+u8 Cpu::read_ie() {
+	return ie_reg;
+}
+u8 Cpu::read_if() {
+	return if_reg;
+}
 
-	return inst.name;
-
+void Cpu::write_ie(u8 byte) {
+	ie_reg = byte;
+}
+void Cpu::write_if(u8 byte) {
+	if_reg = byte;
 }
 
