@@ -76,8 +76,8 @@ int main(int, char**)
 	std::string acid_laptop = "C:\\Users\\zacha\\OneDrive\\Desktop\\CS\\EMU\\dmg-acid2.gb";
 	std::string tetris = "C:\\Users\\David\\Documents\\CS\\EMU\\tetris.gb";
 	std::string acid = "C:\\Users\\David\\Documents\\CS\\EMU\\dmg-acid2.gb";
-    std::string filepath = "C:\\Users\\David\\Documents\\CS\\EMU\\gb-test-roms\\cpu_instrs\\individual\\11-op a,(hl).gb";
-    cartridge* cart = new cartridge(filepath);
+    std::string filepath = "C:\\Users\\David\\Documents\\CS\\EMU\\gb-test-roms\\cpu_instrs\\individual\\02-interrupts.gb";
+    cartridge* cart = new cartridge(tetris);
     char* title = cart->header->title;
     Mmu* mem = new Mmu(cart, true);
     Cpu* cpu = new Cpu(mem);
@@ -242,6 +242,8 @@ int main(int, char**)
         int count = 0;
         while (cycles < CYCLES_PER_FRAME) {
             count = cpu->step();
+            //printf("PC: %x\n", cpu->pc);
+            //printf("A: %d\n", cpu->reg_a);
             timer->tick(count);
             ppu->tick(count);
             cycles += count;

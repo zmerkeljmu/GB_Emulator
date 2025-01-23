@@ -7,7 +7,7 @@ Timer::Timer(Mmu* memory) {
 
 //cycles here are m cycles
 void Timer::tick(u8 cycles) {
-	counter = old_counter;
+	old_counter = counter;
 	counter +=  cycles * 4; //converted to t cycles
 	div = counter >> 8;
 	do_tima();
@@ -30,6 +30,7 @@ void Timer::do_tima() {
 			overflow = false;
 			tima = tma;
 			mem->set_bit_reg(hardware_reg::IF, interrupt::TIMER, 1);
+			
 			//printf("%x\n", mem->read_byte(hardware_reg::IF));
 			//printf("%x\n", mem->read_byte(hardware_reg::IE));
 
@@ -37,7 +38,6 @@ void Timer::do_tima() {
 		//inc tima
 		if (prev_and && !and_result && timer_enable) {
 			tima++;
-			//printf("tima = %d\n", tima);
 			overflow = tima == 0;
 		}
 		prev_and = and_result;

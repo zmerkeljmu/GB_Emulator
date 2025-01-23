@@ -241,15 +241,15 @@ bool Cpu::handle_interrupts() {
 }
 
 bool Cpu::read_bit_IE(int bit) {
-	return u8read_bit(bit, &ie_reg);
+	return ie_reg & (1 << bit);
 }
 
 bool Cpu::read_bit_IF(int bit) {
-	return u8read_bit(bit, &if_reg);
+	return if_reg & (1 << bit);
 }
 
 void Cpu::clear_bit_IF(int bit) {
-	u8set_bit(bit, &if_reg, 0);
+	if_reg &= ~(1 << bit);
 }
 
 void Cpu::stack_push(u8* reg_from) {

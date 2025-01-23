@@ -74,6 +74,9 @@ u8 Mmu::read_byte(u16 address) {
 		return hram[address - HRAM_START];
 	if (address == hardware_reg::IE)
 		return cpu->read_ie();
+	else {
+		exit(0);
+	}
 }
 
 void Mmu::write_byte(u16 address, u8 byte) {
@@ -106,8 +109,9 @@ void Mmu::write_byte(u16 address, u8 byte) {
 			timer->write_tma(byte);
 		else if (address == hardware_reg::TAC)
 			timer->write_tac(byte);
-		else if (address == hardware_reg::IF)
+		else if (address == hardware_reg::IF) {
 			cpu->write_if(byte);
+		}
 		else if (address >= 0xFF10 && address <= 0xFF3F)
 			return;
 		else if (address == hardware_reg::LCDC)
@@ -125,15 +129,15 @@ void Mmu::write_byte(u16 address, u8 byte) {
 		else if (address == hardware_reg::DMA)//UNIMPLEMENTED
 			return;
 		else if (address == hardware_reg::BGP)
-			return ppu->write_bgp(byte);
+			ppu->write_bgp(byte);
 		else if (address == hardware_reg::OBP0)
-			return ppu->write_obp0(byte);
+			ppu->write_obp0(byte);
 		else if (address == hardware_reg::OBP1)
-			return ppu->write_obp1(byte);
+			ppu->write_obp1(byte);
 		else if (address == hardware_reg::WY)
-			return ppu->write_wy(byte);
+			ppu->write_wy(byte);
 		else if (address == hardware_reg::WX)
-			return ppu->write_wx(byte);
+			ppu->write_wx(byte);
 		else {
 			printf("ERROR READ NOT IMPLEMENTED FOR %d", address);
 			exit(0);
@@ -141,8 +145,9 @@ void Mmu::write_byte(u16 address, u8 byte) {
 	}
 	else if (address <= HRAM_END)
 		hram[address - HRAM_START] = byte;
-	else if (address == hardware_reg::IE)
+	else if (address == hardware_reg::IE) {
 		cpu->write_ie(byte);
+	}
 }
 
 bool Mmu::read_bit_reg(u16 address, u8 bit) {
