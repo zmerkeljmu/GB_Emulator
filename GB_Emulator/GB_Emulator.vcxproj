@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\zacha\OneDrive\Desktop\CS\EMU\SDL2-2.30.11\include;C:\Users\David\Documents\CS\EMU\SDL2-devel-2.26.5-VC\SDL2-2.26.5\include;$(ProjectDir)imgui\</IncludePath>
+    <IncludePath>C:\Users\zacha\OneDrive\Desktop\CS\EMU\SDL2-2.30.11\include;C:\Users\David\Documents\CS\EMU\SDL2-devel-2.26.5-VC\SDL2-2.26.5\include;$(ProjectDir)imgui\;$(ProjectDir)tinyfiledialog\</IncludePath>
     <LibraryPath>C:\Users\zacha\OneDrive\Desktop\CS\EMU\SDL2-2.30.11\lib\x64;C:\Program Files %28x86%29\Windows Kits\10\Lib\10.0.22621.0\um\x64;C:\Users\David\Documents\CS\EMU\SDL2-devel-2.26.5-VC\SDL2-2.26.5\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -165,6 +165,7 @@
     <ClCompile Include="tests.cpp" />
     <ClCompile Include="tile.cpp" />
     <ClCompile Include="timer.cpp" />
+    <ClCompile Include="tinyfiledialog\tinyfiledialogs.c" />
     <ClInclude Include="gameboy.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
@@ -180,6 +181,7 @@
     <ClInclude Include="ppu.h" />
     <ClInclude Include="tile.h" />
     <ClInclude Include="timer.h" />
+    <ClInclude Include="tinyfiledialog\tinyfiledialogs.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="16bit_arithmetic.h" />

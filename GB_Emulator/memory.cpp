@@ -66,8 +66,7 @@ u8 Mmu::read_byte(u16 address) {
 		else if (address == hardware_reg::WX)
 			return ppu->read_wx();
 		else {
-			printf("ERROR READ NOT IMPLEMENTED FOR %d", address);
-			exit(0);
+			return 0xFF;
 		}
 	}
 	if (address <= HRAM_END)
@@ -139,8 +138,7 @@ void Mmu::write_byte(u16 address, u8 byte) {
 		else if (address == hardware_reg::WX)
 			ppu->write_wx(byte);
 		else {
-			printf("ERROR READ NOT IMPLEMENTED FOR %d", address);
-			exit(0);
+			return;
 		}
 	}
 	else if (address <= HRAM_END)

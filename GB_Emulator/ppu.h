@@ -15,6 +15,8 @@ public:
 	PPU(Mmu* mmu);
 	Mmu* mmu;
 	void scan_vram(GLuint* framebuffer);
+	void render_bg_tilemap(GLuint* framebuffer);
+
 	void tick(u32 cycles);
 
 	void write_lyc(u8 byte);
@@ -77,9 +79,13 @@ private:
 	bool cur_stat = false;
 	bool prev_stat = false;
 
+	u8 read_bgp0();
+	u8 read_bgp1();
+	u8 read_bgp2();
+	u8 read_bgp3();
+
 
 	void check_stat();
-	void render_tilemap();
 
 	tile read_tile(u16 address);
 

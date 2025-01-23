@@ -154,3 +154,6 @@ const u16 EXTERNAL_END = 0xBFFF;
 const u16 ECHO_START = 0xE000;
 const u16 ECHO_END = 0xFDFF;
 const u16 IO_END = 0xFF7F;
+
+const u16 MAP0_START = 0x9800;
+const u16 MAP1_START = 0x9C00;

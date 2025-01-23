@@ -6,6 +6,7 @@
 // - Getting Started      https://dearimgui.com/getting-started
 // - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
 // - Introduction, links and more at the top of imgui.cpp
+#include "tinyfiledialogs.h"
 #include "iostream"
 #include "cart.h"
 #include "common.h"
@@ -73,35 +74,6 @@ int main(int, char**)
 #ifdef SDL_HINT_IME_SHOW_UI
     SDL_SetHint(SDL_HINT_IME_SHOW_UI, "1");
 #endif
-	std::string acid_laptop = "C:\\Users\\zacha\\OneDrive\\Desktop\\CS\\EMU\\dmg-acid2.gb";
-	std::string tetris = "C:\\Users\\David\\Documents\\CS\\EMU\\tetris.gb";
-	std::string acid = "C:\\Users\\David\\Documents\\CS\\EMU\\dmg-acid2.gb";
-    std::string filepath = "C:\\Users\\David\\Documents\\CS\\EMU\\gb-test-roms\\cpu_instrs\\individual\\02-interrupts.gb";
-    cartridge* cart = new cartridge(tetris);
-    char* title = cart->header->title;
-    Mmu* mem = new Mmu(cart, true);
-    Cpu* cpu = new Cpu(mem);
-    cpu->debug = false;
-    PPU* ppu = new PPU(mem);
-    Timer* timer = new Timer(mem);
-    mem->set_cpu(cpu);
-    mem->set_ppu(ppu);
-    mem->set_timer(timer);
-    Gameboy* gb = new Gameboy(cpu, timer, ppu);
-
-    u8* reg_a_point = &cpu->reg_a;
-    u8* reg_b_point = &cpu->reg_b;
-    u8* reg_c_point = &cpu->reg_c;
-    u8* reg_d_point = &cpu->reg_d;
-    u8* reg_e_point = &cpu->reg_e;
-    u8* reg_f_point = &cpu->reg_f;
-    u8* reg_h_point = &cpu->reg_h;
-    u8* reg_l_point = &cpu->reg_l;
-    u16* reg_pc_point = &cpu->pc;
-    u16* reg_sp_point = &cpu->sp;
-    bool* reg_ime_point = &cpu->ime;
-
-
     // Create window with graphics context
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
@@ -176,35 +148,81 @@ int main(int, char**)
     bool show_another_window = false;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
+
+
+    //INIT VRAM VIEWER TEXTURE
     const GLuint width = 128;
     const GLuint height = 192;
 
     // Create an array to hold the pixel data (128x192 resolution with RGBA format)
     GLuint framebuffer[width * height]; // 4 bytes per pixel (RGBA)
 
-    // Fill the framebuffer with blue (R=0, G=0, B=255, A=255)
-    for (GLuint i = 0; i < width * height; ++i) {
-        RGBA blue = { 0, 0, 255, 255 };
-        memcpy(framebuffer + i, &blue, sizeof(RGBA));
-    }
-
-    GLuint textureID;
-    glGenTextures(1, &textureID);
-    glBindTexture(GL_TEXTURE_2D, textureID);
+    GLuint vram_viewer;
+    glGenTextures(1, &vram_viewer);
+    glBindTexture(GL_TEXTURE_2D, vram_viewer);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-
-
     // Create the texture with initial data (using the framebuffer directly)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, framebuffer);
+    
+    //INIT BACKGROUND VIEWER TEXTURE
+    const GLuint bg_width = 256;
+    const GLuint bg_height = 256;
+
+    // Create an array to hold the pixel data (128x192 resolution with RGBA format)
+    GLuint framebuffer_background[bg_width * bg_height]; // 4 bytes per pixel (RGBA)
+
+    GLuint background_viewer;
+    glGenTextures(1, &background_viewer);
+    glBindTexture(GL_TEXTURE_2D, background_viewer);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    // Create the texture with initial data (using the framebuffer directly)
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bg_width, bg_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, framebuffer_background);
+
+
+    std::string acid_laptop = "C:\\Users\\zacha\\OneDrive\\Desktop\\CS\\EMU\\dmg-acid2.gb";
+    std::string tetris_laptop = "C:\\Users\\zacha\\OneDrive\\Desktop\\CS\\EMU\\Tetris.gb";
+    std::string tetris = "C:\\Users\\David\\Documents\\CS\\EMU\\tetris.gb";
+    std::string acid = "C:\\Users\\David\\Documents\\CS\\EMU\\dmg-acid2.gb";
+    std::string filepath = "C:\\Users\\David\\Documents\\CS\\EMU\\gb-test-roms\\cpu_instrs\\individual\\02-interrupts.gb";
+    const char* game = tinyfd_openFileDialog("game select", "", 1, NULL, NULL, 0);
+    
+    cartridge* cart = new cartridge(game);
+    char* title = cart->header->title;
+    Mmu* mem = new Mmu(cart, true);
+    Cpu* cpu = new Cpu(mem);
+    cpu->debug = false;
+    PPU* ppu = new PPU(mem);
+    Timer* timer = new Timer(mem);
+    mem->set_cpu(cpu);
+    mem->set_ppu(ppu);
+    mem->set_timer(timer);
+    Gameboy* gb = new Gameboy(cpu, timer, ppu);
+
+    u8* reg_a_point = &cpu->reg_a;
+    u8* reg_b_point = &cpu->reg_b;
+    u8* reg_c_point = &cpu->reg_c;
+    u8* reg_d_point = &cpu->reg_d;
+    u8* reg_e_point = &cpu->reg_e;
+    u8* reg_f_point = &cpu->reg_f;
+    u8* reg_h_point = &cpu->reg_h;
+    u8* reg_l_point = &cpu->reg_l;
+    u16* reg_pc_point = &cpu->pc;
+    u16* reg_sp_point = &cpu->sp;
+    bool* reg_ime_point = &cpu->ime;
 
     
+
     Uint32 frame_start_time, frame_end_time, frame_duration;
     const int CYCLES_PER_FRAME = 17556;
     const int TARGET_FPS = common::CPU_SPEED / CYCLES_PER_FRAME;
     const int TARGET_FRAME_TIME_MS = 1000 / TARGET_FPS; 
+
 
     // Main loop
     bool done = false;
@@ -303,12 +321,23 @@ int main(int, char**)
         }
         {
             ImGui::Begin("VRAM Viewer");
-            ImGui::Image((ImTextureID)(intptr_t)textureID, ImVec2(width * 3, height* 3));
+            ImGui::Image((ImTextureID)(intptr_t)vram_viewer, ImVec2(width * 3, height* 3));
 
 			ppu->scan_vram(framebuffer);
 
-            glBindTexture(GL_TEXTURE_2D, textureID);
+            glBindTexture(GL_TEXTURE_2D, vram_viewer);
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, framebuffer);
+
+            ImGui::End();
+        }
+        {
+            ImGui::Begin("Background Viewer");
+            ImGui::Image((ImTextureID)(intptr_t)background_viewer, ImVec2(bg_width * 2, bg_height * 2));
+
+            ppu->render_bg_tilemap(framebuffer_background);
+
+            glBindTexture(GL_TEXTURE_2D, background_viewer);
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, bg_width, bg_height, GL_RGBA, GL_UNSIGNED_BYTE, framebuffer_background);
 
             ImGui::End();
         }

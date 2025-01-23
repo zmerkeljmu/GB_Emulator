@@ -234,10 +234,21 @@ void PPU::write_ppu_mode(u8 state) {
     stat |= state;
 }
 
+u8 PPU::read_bgp0() {
+    return bgp & 0b11;
+}
 
+u8 PPU::read_bgp1() {
+    return (bgp & 0b1100) >> 2;
+}
 
+u8 PPU::read_bgp2() {
+    return (bgp & 0b110000) >> 4;
+}
 
-
+u8 PPU::read_bgp3() {
+    return (bgp & 0b11000000) >> 6;
+}
 
 
 
@@ -318,8 +329,57 @@ void PPU::scan_vram(GLuint* framebuffer) {
 }
 
 
-void PPU::render_tilemap() {
+void PPU::render_bg_tilemap(GLuint* framebuffer) {
+    u16 map_area;
+    tile* tiles = new tile[32 * 32];
+    u16 base;
+    if (u8read_bit(lcdc::BG_TILE_MAP, &lcdc))
+        map_area = MAP1_START;
+    else
+        map_area = MAP0_START;
+    if (u8read_bit(lcdc::TILE_DATA, &lcdc))
+        base = 0x8000;
+    else
+        base = 0x8800;
     
+    for (int i = 0; i < 1024; i++) {
+        if (base == 0x8000)
+            tiles[i] = read_tile(0x8000 + read_vram(map_area + i) * 16);
+        else
+            tiles[i] = read_tile(0x8800 + (i8) read_vram(map_area + i) * 16);
+    }
 
+    int row = 0;
+    int column = 0;
+    for (int j = 0; j < 1024; ++j) {
 
+        for (int tile_row = 0; tile_row < 8; tile_row++) {
+            for (int tile_col = 0; tile_col < 8; tile_col++) {
+                int pixel_offset = ((row * 8 + tile_row) * 256) + (column * 8 + tile_col);
+                GLuint color = 0;
+                switch (tiles[j].data[tile_row][tile_col]) {
+                case WHITE:
+                    memcpy(&color, &white, sizeof(RGBA));
+                    break;
+                case LIGHT_GRAY:
+                    memcpy(&color, &light_gray, sizeof(RGBA));
+                    break;
+                case DARK_GRAY:
+                    memcpy(&color, &dark_gray, sizeof(RGBA));
+                    break;
+                case BLACK:
+                    memcpy(&color, &black, sizeof(RGBA));
+                    break;
+                default:
+                    break;
+                }
+                framebuffer[pixel_offset] = color;
+            }
+        }
+        column++;
+        if (column > 31) {
+            column = 0;
+            row++;
+        }
+    }
 }

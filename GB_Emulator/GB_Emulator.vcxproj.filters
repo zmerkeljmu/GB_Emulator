@@ -25,6 +25,12 @@
     <Filter Include="Header Files\imgui">
       <UniqueIdentifier>{b5672131-a0e5-409c-afe9-06bf90e95f22}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\tinyfiledialog">
+      <UniqueIdentifier>{da483d52-2950-40f6-afc0-dbe86438ca71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\tinyfiledialog">
+      <UniqueIdentifier>{1a3a21b7-fba0-4b38-8cb6-8a7e9dfcb812}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cart.cpp">
@@ -111,6 +117,9 @@
     <ClCompile Include="tile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="tinyfiledialog\tinyfiledialogs.c">
+      <Filter>Source Files\tinyfiledialog</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cart.h">
@@ -196,6 +205,9 @@
     </ClInclude>
     <ClInclude Include="tile.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tinyfiledialog\tinyfiledialogs.h">
+      <Filter>Header Files\tinyfiledialog</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
