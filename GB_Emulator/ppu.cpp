@@ -45,6 +45,13 @@ keep track of how many cycles are left in the current mode
 when ppu tick is called check state and then call function for that state
 in that state function subtract number of cycles from remaining cycles, if that number will hit 0 or go below 0 change state and run next state function (making sure to carry over the extra cycles from the previous state)
 
+want to make sure im understanding stat IRQ blocking right, do you basically just keep 2 internal flags 
+that at each point where there is a possible stat IRQ you check the STAT reg to see if that condition is
+enabled, if it is you set the old_stat flag to the value of cur_stat and set cur_stat to true and if it
+isn't you set cur_stat to false and only trigger an interrupt if (cur_stat && !old_stat)
+
+two internal flags prev_stat and cur_stat
+at every change of state calc stat and move cur_state to prev_state
 */
 
 PPU::PPU(Mmu* mmu) : oam_ram{}, vram{} {
@@ -89,7 +96,6 @@ void PPU::tick(u32 cycles) {
                 to_vblank(overflow);
             }
             else {
-                exit_vblank();
                 to_oam_search(overflow);
             }
             break;
@@ -108,6 +114,7 @@ void PPU::to_hblank(u32 tcycle_overflow) {
     draw_line();
     cycles_remaining = HBLANK_CYCLES - tcycle_overflow;
     write_ppu_mode(HBLANK);
+    calc_stat(1 << stat_reg::MODE_0);
 }
 
 //transition to OAM search
@@ -115,7 +122,9 @@ void PPU::to_oam_search(u32 tcycle_overflow) {
     cycles_remaining = OAM_CYCLES - tcycle_overflow;
     write_ppu_mode(OAM_SEARCH);
     ly++;
-    mmu->write_byte(hardware_reg::LY, ly);
+    if (ly > 153)
+        ly = 0;
+    calc_stat(1 << stat_reg::MODE_2);
 }
 
 //transition to pixel transfer
@@ -129,13 +138,10 @@ void PPU::to_vblank(u32 tcycle_overflow) {
     cycles_remaining = VBLANK_CYCLES - tcycle_overflow;
     write_ppu_mode(VBLANK);
     ly++;
+    calc_stat(1 << stat_reg::MODE_1);
     mmu->write_byte(hardware_reg::IF, interrupt::VBLANK);
 }
 
-void PPU::exit_vblank() {
-    ly = 0;
-    if (ly == lyc);
-}
 
 
 //functions called by the mmu for io register reads
@@ -364,10 +370,10 @@ void PPU::render_bg_tilemap() {
 }
 
 void PPU::get_bg_line(GLuint* bg_line) {
-    tile tiles[20];
+    tile tiles[32];
     u16 map_area;
 
-    int tile_row = ly / 8;
+    int tile_row = ((scy + ly) / 8) % 32;
     int line_in_tile = ly % 8;
 
     u16 base;
@@ -380,14 +386,14 @@ void PPU::get_bg_line(GLuint* bg_line) {
     else
         base = 0x8800;
 
-    for (int num_tile = 0; num_tile < 20; num_tile++) {
+    for (int num_tile = 0; num_tile < 32; num_tile++) {
         if (base == 0x8000)
-            tiles[num_tile] = read_tile(0x8000 + read_vram(map_area + num_tile + 32 * tile_row) * 16);
+            tiles[num_tile] = read_tile(0x8000 + read_vram(map_area + num_tile + (32 * tile_row)) * 16);
         else
-            tiles[num_tile] = read_tile(0x8800 + (i8)read_vram(map_area + num_tile + 32 * tile_row) * 16);
+            tiles[num_tile] = read_tile(0x8800 + (i8)read_vram(map_area + num_tile + (32 * tile_row)) * 16);
     }
     
-    for (int tile_index = 0; tile_index < 20; tile_index++) {
+    for (int tile_index = 0; tile_index < 32; tile_index++) {
         for (int pixel_index = 0; pixel_index < 8; pixel_index++) {
             GLuint color = 0;
             switch (tiles[tile_index].data[line_in_tile][pixel_index]) {
@@ -404,18 +410,20 @@ void PPU::get_bg_line(GLuint* bg_line) {
                 memcpy(&color, &black, sizeof(RGBA));
                 break;
             default:
+                printf("ERROR\n");
+                exit(0);
                 break;
             }
             bg_line[(tile_index * 8) + pixel_index] = color;
         }
     }
-
 }
 
 void PPU::draw_line() {
+    if (ly > 143)
+        return;
     GLuint bg_line[256];
     get_bg_line(bg_line);
-    int bg_offset;
     int display_offset;
     
     u8 bg_y = (scy + ly) % 256;
@@ -425,4 +433,12 @@ void PPU::draw_line() {
         display_offset = (ly * 160) + screen_x;
         display_buffer[display_offset] = bg_line[bg_x];
     }
+}
+
+void PPU::calc_stat(u8 mode) {
+    prev_stat = cur_stat;
+    cur_stat = (mode & stat) && (ly == lyc);
+
+    if (cur_stat && !prev_stat)
+        mmu->set_bit_reg(hardware_reg::IF, interrupt::LCD, 1);
 }

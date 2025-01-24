@@ -86,14 +86,13 @@ private:
 	u8 read_bgp2();
 	u8 read_bgp3();
 
-
-	void check_stat();
-
 	tile read_tile(u16 address);
 
 	u8 read_ppu_mode();
 	void write_ppu_mode(u8 state);
 	void draw_line();
+
+	void calc_stat(u8 mode);
 };
 
 

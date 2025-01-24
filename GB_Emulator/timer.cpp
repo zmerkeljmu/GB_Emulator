@@ -22,21 +22,21 @@ void Timer::do_tima() {
 
 	//loop for each time the counter has increased
 	for (u16 i = old_counter + 1; i < counter; i++) {
-		bool bit = bit_select & i;
+		bool bit = (i >> bit_select) & 1;
 		bool and_result = bit && timer_enable;
 
 		if (overflow) {
-			//std::cout << "TIMER OVERFLOW\n";
+			std::cout << "TIMER OVERFLOW\n";
 			overflow = false;
 			tima = tma;
 			mem->set_bit_reg(hardware_reg::IF, interrupt::TIMER, 1);
 			
-			//printf("%x\n", mem->read_byte(hardware_reg::IF));
-			//printf("%x\n", mem->read_byte(hardware_reg::IE));
+			printf("%x\n", mem->read_byte(hardware_reg::IF));
+			printf("%x\n", mem->read_byte(hardware_reg::IE));
 
 		}
 		//inc tima
-		if (prev_and && !and_result && timer_enable) {
+		if (prev_and && !and_result) {
 			tima++;
 			overflow = tima == 0;
 		}
@@ -87,6 +87,7 @@ u8 Timer:: read_div() {
 void Timer:: write_div(u8 byte) {
 	div = 0;
 	counter = 0;
+	prev_and = false;
 }
 u8 Timer:: read_tac() {
 	return tac;
