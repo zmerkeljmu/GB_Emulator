@@ -105,6 +105,7 @@ void PPU::tick(u32 cycles) {
 
 //tranistion to hblank
 void PPU::to_hblank(u32 tcycle_overflow) {
+    draw_line();
     cycles_remaining = HBLANK_CYCLES - tcycle_overflow;
     write_ppu_mode(HBLANK);
 }
@@ -128,14 +129,12 @@ void PPU::to_vblank(u32 tcycle_overflow) {
     cycles_remaining = VBLANK_CYCLES - tcycle_overflow;
     write_ppu_mode(VBLANK);
     ly++;
-
-    mmu->write_byte(hardware_reg::LY, ly);
+    mmu->write_byte(hardware_reg::IF, interrupt::VBLANK);
 }
 
 void PPU::exit_vblank() {
     ly = 0;
-    if (ly == lyc)
-    mmu->write_byte(hardware_reg::LY, ly);
+    if (ly == lyc);
 }
 
 
@@ -250,25 +249,6 @@ u8 PPU::read_bgp3() {
     return (bgp & 0b11000000) >> 6;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 tile PPU::read_tile(u16 address) {
     tile cur_tile;
     for (int line = 0; line < 8; line++) {
@@ -328,8 +308,7 @@ void PPU::scan_vram(GLuint* framebuffer) {
     }
 }
 
-
-void PPU::render_bg_tilemap(GLuint* framebuffer) {
+void PPU::render_bg_tilemap() {
     u16 map_area;
     tile* tiles = new tile[32 * 32];
     u16 base;
@@ -373,7 +352,7 @@ void PPU::render_bg_tilemap(GLuint* framebuffer) {
                 default:
                     break;
                 }
-                framebuffer[pixel_offset] = color;
+                bg_buffer[pixel_offset] = color;
             }
         }
         column++;
@@ -381,5 +360,69 @@ void PPU::render_bg_tilemap(GLuint* framebuffer) {
             column = 0;
             row++;
         }
+    }
+}
+
+void PPU::get_bg_line(GLuint* bg_line) {
+    tile tiles[20];
+    u16 map_area;
+
+    int tile_row = ly / 8;
+    int line_in_tile = ly % 8;
+
+    u16 base;
+    if (u8read_bit(lcdc::BG_TILE_MAP, &lcdc))
+        map_area = MAP1_START;
+    else
+        map_area = MAP0_START;
+    if (u8read_bit(lcdc::TILE_DATA, &lcdc))
+        base = 0x8000;
+    else
+        base = 0x8800;
+
+    for (int num_tile = 0; num_tile < 20; num_tile++) {
+        if (base == 0x8000)
+            tiles[num_tile] = read_tile(0x8000 + read_vram(map_area + num_tile + 32 * tile_row) * 16);
+        else
+            tiles[num_tile] = read_tile(0x8800 + (i8)read_vram(map_area + num_tile + 32 * tile_row) * 16);
+    }
+    
+    for (int tile_index = 0; tile_index < 20; tile_index++) {
+        for (int pixel_index = 0; pixel_index < 8; pixel_index++) {
+            GLuint color = 0;
+            switch (tiles[tile_index].data[line_in_tile][pixel_index]) {
+            case WHITE:
+                memcpy(&color, &white, sizeof(RGBA));
+                break;
+            case LIGHT_GRAY:
+                memcpy(&color, &light_gray, sizeof(RGBA));
+                break;
+            case DARK_GRAY:
+                memcpy(&color, &dark_gray, sizeof(RGBA));
+                break;
+            case BLACK:
+                memcpy(&color, &black, sizeof(RGBA));
+                break;
+            default:
+                break;
+            }
+            bg_line[(tile_index * 8) + pixel_index] = color;
+        }
+    }
+
+}
+
+void PPU::draw_line() {
+    GLuint bg_line[256];
+    get_bg_line(bg_line);
+    int bg_offset;
+    int display_offset;
+    
+    u8 bg_y = (scy + ly) % 256;
+    u8 bg_x;
+    for (int screen_x = 0; screen_x < 160; screen_x++) {
+        bg_x = (scx + screen_x) % 256;
+        display_offset = (ly * 160) + screen_x;
+        display_buffer[display_offset] = bg_line[bg_x];
     }
 }

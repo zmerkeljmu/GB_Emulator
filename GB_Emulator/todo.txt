@@ -1,1 +1,5 @@
+STAT INTERRUPT/STAT BLOCKING
+scanline ppu
 Color palettes
+OAM BLOCKING
+DMA

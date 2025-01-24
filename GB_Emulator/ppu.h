@@ -15,7 +15,7 @@ public:
 	PPU(Mmu* mmu);
 	Mmu* mmu;
 	void scan_vram(GLuint* framebuffer);
-	void render_bg_tilemap(GLuint* framebuffer);
+	void render_bg_tilemap();
 
 	void tick(u32 cycles);
 
@@ -41,13 +41,15 @@ public:
 	u8 read_wx();
 	void write_wx(u8 byte);
 
-
-
 	u8 read_vram(u16 address);
 	void write_vram(u16 address, u8 byte);
 
 	u8 read_oam_ram(u16 address);
 	void write_oam_ram(u16 address, u8 byte);
+	GLuint display_buffer[160 * 144] = {};
+	GLuint bg_buffer[256 * 256] = {};
+	void get_bg_line(GLuint* bg_line);
+
 
 private:
 	u8 vram[0x1FFF];
@@ -91,6 +93,7 @@ private:
 
 	u8 read_ppu_mode();
 	void write_ppu_mode(u8 state);
+	void draw_line();
 };
 
 

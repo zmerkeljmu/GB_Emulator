@@ -184,6 +184,25 @@ int main(int, char**)
     // Create the texture with initial data (using the framebuffer directly)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bg_width, bg_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, framebuffer_background);
 
+    //CREATE GAME TEXTURE
+    const GLuint display_width = 160;
+    const GLuint display_height = 144;
+
+    //this might not be needed
+    GLuint framebuffer_display[display_width * display_height]; // 4 bytes per pixel (RGBA)
+
+    GLuint display_tex;
+    glGenTextures(1, &display_tex);
+    glBindTexture(GL_TEXTURE_2D, display_tex);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    // Create the texture with initial data (using the framebuffer directly)
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, display_width, display_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, framebuffer_display);
+
+
+
 
     std::string acid_laptop = "C:\\Users\\zacha\\OneDrive\\Desktop\\CS\\EMU\\dmg-acid2.gb";
     std::string tetris_laptop = "C:\\Users\\zacha\\OneDrive\\Desktop\\CS\\EMU\\Tetris.gb";
@@ -334,10 +353,19 @@ int main(int, char**)
             ImGui::Begin("Background Viewer");
             ImGui::Image((ImTextureID)(intptr_t)background_viewer, ImVec2(bg_width * 2, bg_height * 2));
 
-            ppu->render_bg_tilemap(framebuffer_background);
+            ppu->render_bg_tilemap();
 
             glBindTexture(GL_TEXTURE_2D, background_viewer);
-            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, bg_width, bg_height, GL_RGBA, GL_UNSIGNED_BYTE, framebuffer_background);
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, bg_width, bg_height, GL_RGBA, GL_UNSIGNED_BYTE, ppu->bg_buffer);
+
+            ImGui::End();
+        }
+        {
+            ImGui::Begin("Display");
+            ImGui::Image((ImTextureID)(intptr_t)display_tex, ImVec2(display_width * 2, display_height * 2));
+
+            glBindTexture(GL_TEXTURE_2D, display_tex);
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, display_width, display_height, GL_RGBA, GL_UNSIGNED_BYTE, ppu->display_buffer);
 
             ImGui::End();
         }
