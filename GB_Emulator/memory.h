@@ -27,5 +27,7 @@ private:
 	PPU* ppu = nullptr;
 	Cpu* cpu = nullptr;
 	Timer* timer = nullptr;
+	void execute_dma(u8 address);
+	u8 dma = 0xFF;
 
 };

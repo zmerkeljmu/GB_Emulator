@@ -12,14 +12,24 @@ Mmu::Mmu(cartridge* cart, bool testing) {
 u8 Mmu::read_byte(u16 address) {
 	if (address <= ROM_END)
 		return cart->read_rom(address);
-	if (address <= VRAM_END)
-		return ppu->read_vram(address);
+	if (address <= VRAM_END) {
+		u8 state = ppu->get_state();
+		if (state != State::PIXEL_TRANSFER)
+			return ppu->read_vram(address);
+		else
+			return 0xFF;
+	}
 	if (address <= WRAM_END)
 		return wram[address - WRAM_START];
 	if (address <= ECHO_END)//echo ram
 		return 0;
-	if (address <= OAM_END)
-		return ppu->read_oam_ram(address);
+	if (address <= OAM_END) {
+		u8 state = ppu->get_state();
+		if (state == State::HBLANK || state == State::VBLANK)
+			return ppu->read_oam_ram(address);
+		else
+			return 0xFF;
+	}
 	if (address <= 0xFEFF)//prohibited area
 		return 0;
 	if (address <= IO_END) {//IO registers
@@ -54,7 +64,7 @@ u8 Mmu::read_byte(u16 address) {
 		else if (address == hardware_reg::LYC)
 			return ppu->read_lyc();
 		else if (address == hardware_reg::DMA)//UNIMPLEMENTED
-			return 0xFF;
+			return dma;
 		else if (address == hardware_reg::BGP)
 			return ppu->read_bgp();
 		else if (address == hardware_reg::OBP0)
@@ -81,14 +91,20 @@ u8 Mmu::read_byte(u16 address) {
 void Mmu::write_byte(u16 address, u8 byte) {
 	if (address <= ROM_END)
 		return;
-	else if (address <= VRAM_END)
-		ppu->write_vram(address, byte);
+	else if (address <= VRAM_END) {
+		u8 state = ppu->get_state();
+		if (state != State::PIXEL_TRANSFER)
+			ppu->write_vram(address, byte);
+	}
 	else if (address <= WRAM_END)
 		wram[address - WRAM_START] = byte;
 	else if (address <= ECHO_END)//echo ram
 		return;
-	else if (address <= OAM_END)
-		ppu->write_oam_ram(address, byte);
+	else if (address <= OAM_END) {
+		u8 state = ppu->get_state();
+		if (state == State::HBLANK || state == State::VBLANK)
+			ppu->write_oam_ram(address, byte);
+	}
 	else if (address <= 0xFEFF)//prohibited area
 		return;
 	else if (address <= IO_END) {//IO registers
@@ -125,8 +141,8 @@ void Mmu::write_byte(u16 address, u8 byte) {
 			return;
 		else if (address == hardware_reg::LYC)
 			return ppu->write_lyc(byte);
-		else if (address == hardware_reg::DMA)//UNIMPLEMENTED
-			return;
+		else if (address == hardware_reg::DMA)
+			execute_dma(byte);
 		else if (address == hardware_reg::BGP)
 			ppu->write_bgp(byte);
 		else if (address == hardware_reg::OBP0)
@@ -170,4 +186,14 @@ void Mmu::set_cpu(Cpu* cpu) {
 
 void Mmu::set_timer(Timer* timer) {
 	this->timer = timer;
+}
+
+void Mmu::execute_dma(u8 address) {
+	u16 init_address = address << 8;
+	u16 init_write_addres = OAM_START;
+
+	for (int i = 0; i < 160; i++) {
+		u16 write_address = init_write_addres + i;
+		ppu->write_oam_ram(init_write_addres + i, read_byte(init_address + i));
+	}
 }

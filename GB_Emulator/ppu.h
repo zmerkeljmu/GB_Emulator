@@ -3,12 +3,6 @@
 #include "memory.h"
 #include <SDL_opengl.h>
 
-enum State {
-	HBLANK = 0,
-	VBLANK = 1,
-	OAM_SEARCH = 2,
-	PIXEL_TRANSFER = 3
-};
 
 class PPU {
 public:
@@ -49,11 +43,12 @@ public:
 	GLuint display_buffer[160 * 144] = {};
 	GLuint bg_buffer[256 * 256] = {};
 	void get_bg_line(GLuint* bg_line);
+	u8 get_state();
 
 
 private:
-	u8 vram[0x1FFF];
-	u8 oam_ram[0x9F];
+	u8 vram[0x1FFF] = {};
+	u8 oam_ram[0x9F + 1] = {};
 	u8 cur_state = State::HBLANK;
 	u32 cycles_remaining = 0;
 	u8 stat = 0x85;
@@ -76,7 +71,6 @@ private:
 	void to_pixel_transfer(u32 tcycle_overflow);
 
 	void to_vblank(u32 tcycle_overflow);
-	void exit_vblank();
 
 	bool cur_stat = false;
 	bool prev_stat = false;

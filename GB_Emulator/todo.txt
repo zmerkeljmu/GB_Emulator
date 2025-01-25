@@ -1,5 +1,3 @@
 timer rewrite
 scanline ppu
 Color palettes
-OAM BLOCKING
-DMA

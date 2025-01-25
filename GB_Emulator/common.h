@@ -140,6 +140,12 @@ namespace hardware_reg {
 	};
 }
 
+enum State {
+	HBLANK = 0,
+	VBLANK = 1,
+	OAM_SEARCH = 2,
+	PIXEL_TRANSFER = 3
+};
 const u16 ROM_END = 0x7FFF;
 const u16 VRAM_START = 0x8000;
 const u16 VRAM_END = 0x9FFF;

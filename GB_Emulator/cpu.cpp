@@ -270,8 +270,6 @@ void Cpu::bootrom() {
 	mem->write_byte(hardware_reg::JOYP, 0xCF);
 	mem->write_byte(hardware_reg::SB, 0x00);
 	mem->write_byte(hardware_reg::SC, 0x7E);
-	mem->write_byte(hardware_reg::DMA, 0xFF);
-
 }
 
 u8 Cpu::read_ie() {

@@ -54,7 +54,7 @@ two internal flags prev_stat and cur_stat
 at every change of state calc stat and move cur_state to prev_state
 */
 
-PPU::PPU(Mmu* mmu) : oam_ram{}, vram{} {
+PPU::PPU(Mmu* mmu) {
 	this->mmu = mmu;
 }
 
@@ -227,7 +227,8 @@ u8 PPU::read_oam_ram(u16 address) {
 }
 
 void PPU::write_oam_ram(u16 address, u8 byte) {
-    oam_ram[address - OAM_START] = byte;
+    u16 index = address - OAM_START;
+    oam_ram[index] = byte;
 }
 
 u8 PPU::read_ppu_mode() {
@@ -441,4 +442,8 @@ void PPU::calc_stat(u8 mode) {
 
     if (cur_stat && !prev_stat)
         mmu->set_bit_reg(hardware_reg::IF, interrupt::LCD, 1);
+}
+
+u8 PPU::get_state() {
+    return this->cur_state;
 }
