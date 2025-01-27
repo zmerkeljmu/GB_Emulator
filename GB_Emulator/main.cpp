@@ -29,6 +29,47 @@
 #include "../libs/emscripten/emscripten_mainloop_stub.h"
 #endif
 
+#define BUTTON_RIGHT 0x01
+#define BUTTON_LEFT  0x02
+#define BUTTON_UP    0x04
+#define BUTTON_DOWN  0x08
+#define BUTTON_A     0x10
+#define BUTTON_B     0x20
+#define BUTTON_SELECT 0x40
+#define BUTTON_START  0x80
+
+void handle_input(SDL_Event* event, Cpu* cpu) {
+    switch (event->type) {
+    case SDL_KEYDOWN:
+        // Check which key was pressed and update buttons_state
+        switch (event->key.keysym.sym) {
+        case SDLK_d:        cpu->button_right = 1; std::cout << "d pressed\n"; break;
+        case SDLK_a:        cpu->button_left = 1; std::cout << "a pressed\n"; break;
+        case SDLK_w:        cpu->button_right = 1; std::cout << "w pressed\n"; break;
+        case SDLK_s:        cpu->button_down = 1; std::cout << "s pressed\n"; break;
+        case SDLK_z:        cpu->button_a = 1; std::cout << "z pressed\n"; break;
+        case SDLK_x:        cpu->button_b = 1; std::cout << "x pressed\n"; break;
+        case SDLK_BACKSPACE:cpu->button_select = 1; std::cout << "backspace pressed\n"; break;
+        case SDLK_RETURN:   cpu->button_start = 1; std::cout << "return pressed\n"; break;
+        }
+        break;
+
+    case SDL_KEYUP:
+        // Check which key was released and update cpu->buttons_state
+        switch (event->key.keysym.sym) {
+        case SDLK_d:        cpu->button_right = 0; std::cout << "d released\n"; break;
+        case SDLK_a:        cpu->button_left = 0; std::cout << "a released\n"; break;
+        case SDLK_w:        cpu->button_right = 0; std::cout << "w released\n"; break;
+        case SDLK_s:        cpu->button_down = 0; std::cout << "s released\n"; break;
+        case SDLK_z:        cpu->button_a = 0; std::cout << "z released\n"; break;
+        case SDLK_x:        cpu->button_b = 0; std::cout << "x released\n"; break;
+        case SDLK_BACKSPACE:cpu->button_select = 0; std::cout << "backspace released\n"; break;
+        case SDLK_RETURN:   cpu->button_start = 0; std::cout << "return released\n"; break;
+        }
+        break;
+    }
+}
+
 // Main code
 int main(int, char**)
 {
@@ -202,8 +243,6 @@ int main(int, char**)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, display_width, display_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, framebuffer_display);
 
 
-
-
     std::string acid_laptop = "C:\\Users\\zacha\\OneDrive\\Desktop\\CS\\EMU\\dmg-acid2.gb";
     std::string tetris_laptop = "C:\\Users\\zacha\\OneDrive\\Desktop\\CS\\EMU\\Tetris.gb";
     std::string tetris = "C:\\Users\\David\\Documents\\CS\\EMU\\tetris.gb";
@@ -239,7 +278,7 @@ int main(int, char**)
 
     Uint32 frame_start_time, frame_end_time, frame_duration;
     const int CYCLES_PER_FRAME = 17556;
-    const int TARGET_FPS = common::CPU_SPEED / CYCLES_PER_FRAME;
+    const int TARGET_FPS = common::CPU_SPEED / (CYCLES_PER_FRAME * 4);
     const int TARGET_FRAME_TIME_MS = 1000 / TARGET_FPS; 
 
 
@@ -269,6 +308,7 @@ int main(int, char**)
                 done = true;
             if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window))
                 done = true;
+            handle_input(&event, cpu);
         }
         if (SDL_GetWindowFlags(window) & SDL_WINDOW_MINIMIZED)
         {
@@ -368,7 +408,8 @@ int main(int, char**)
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, display_width, display_height, GL_RGBA, GL_UNSIGNED_BYTE, ppu->display_buffer);
 
             ImGui::End();
-        }
+		}
+
 
         // 3. Show another simple window.
         if (show_another_window)
@@ -401,7 +442,7 @@ int main(int, char**)
 
         SDL_GL_SwapWindow(window);
 
-        /*
+        
         frame_end_time = SDL_GetTicks();
         frame_duration = frame_end_time - frame_start_time;
         if (frame_duration < TARGET_FRAME_TIME_MS)
@@ -409,7 +450,7 @@ int main(int, char**)
             SDL_Delay(TARGET_FRAME_TIME_MS - frame_duration);
         }
         
-        */
+        
     }
 #ifdef __EMSCRIPTEN__
     EMSCRIPTEN_MAINLOOP_END;
@@ -426,3 +467,4 @@ int main(int, char**)
 
     return 0;
 }
+

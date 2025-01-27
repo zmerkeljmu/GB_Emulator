@@ -3,95 +3,100 @@
 
 Timer::Timer(Mmu* memory) {
 	mem = memory;
+	counter = 0xab00;
+	tima = 0x00;
+	tma = 0x00;
+	tac = 0xF8;
+	tima_reload_cycle = false;
 }
 
-//cycles here are m cycles
 void Timer::tick(u8 cycles) {
-	old_counter = counter;
-	counter +=  cycles * 4; //converted to t cycles
-	div = counter >> 8;
-	do_tima();
-	return;
+	u8 tcycles = cycles * 4;
+	for (int i = 0; i < tcycles; i++) {
+		do_tima();
+	}
 }
 
 void Timer::do_tima() {
-
-	u32 freq = get_freq();
-	u16 bit_select = freq >> 1;
-	bool timer_enable = u8read_bit(timer::TIMER_ENABLE, &tac);
-
-	//loop for each time the counter has increased
-	for (u16 i = old_counter + 1; i < counter; i++) {
-		bool bit = (i >> bit_select) & 1;
-		bool and_result = bit && timer_enable;
-
-		if (overflow) {
-			std::cout << "TIMER OVERFLOW\n";
-			overflow = false;
+	tima_reload_cycle = false;
+	if (cycles_til_tima_irq > 0) {
+		cycles_til_tima_irq--;
+		if (cycles_til_tima_irq == 0) {
+			mem->write_byte(hardware_reg::IF, mem->read_byte(hardware_reg::IF) | (1 << interrupt::TIMER));
 			tima = tma;
-			mem->set_bit_reg(hardware_reg::IF, interrupt::TIMER, 1);
-			
-			printf("%x\n", mem->read_byte(hardware_reg::IF));
-			printf("%x\n", mem->read_byte(hardware_reg::IE));
-
+			tima_reload_cycle = true;
 		}
-		//inc tima
-		if (prev_and && !and_result) {
-			tima++;
-			overflow = tima == 0;
-		}
-		prev_and = and_result;
 	}
-	return;
+	update_counter(counter + 1);
 }
 
-u32 Timer::get_freq() {
-
-	u32 freq = 0;
-	u8 tac = mem->read_byte(hardware_reg::TAC);
+void Timer::update_counter(u16 val) {
+	counter = val;
+	u8 and_result = 0;
 	switch (tac & 3) //check first 2 bits
 	{
 	case 0:
-		freq = common::CPU_SPEED / 4096; //every 256 m cycles (1024)
+		and_result = (counter >> 9) & 1;
 		break;
 	case 1:
-		freq = common::CPU_SPEED / 262144; //every 4 m cycles (16)
+		and_result = (counter >> 3) & 1;
 		break;
 	case 2:
-		freq = common::CPU_SPEED / 65536; //every 16 m cycles (64)
+		and_result = (counter >> 5) & 1;
 		break;
 	case 3:
-		freq = common::CPU_SPEED / 16384; //every 64 m cycles (256)
+		and_result = (counter >> 7) & 1;
 		break;
 	}
+	and_result &= ((tac & 4) >> 2);
+	detect_edge(prev_and, and_result);
+	prev_and = and_result;
 
-	return freq;
+}
 
+void Timer::detect_edge(bool before, bool after) {
+	if (before && !after) {
+		tima++;
+		if (tima == 0) {
+			cycles_til_tima_irq = 4;
+		}
+	}
 }
 
 u8 Timer:: read_tima() {
 	return tima;
 }
-void Timer:: write_tima(u8 byte) {
-	tima = byte;
+void Timer::write_tima(u8 byte) {
+	if (!tima_reload_cycle) {
+		tima = byte;
+	}
+	if (cycles_til_tima_irq == 1) {
+		cycles_til_tima_irq = 0;
+	}
 }
+
 u8 Timer:: read_tma() {
 	return tma;
 }
-void Timer:: write_tma(u8 byte) {
+void Timer::write_tma(u8 byte) {
+	if (tima_reload_cycle) {
+		tima = byte;
+	}
 	tma = byte;
 }
+
 u8 Timer:: read_div() {
-	return div;
+	return (counter >> 8) && 0xFF;
 }
 void Timer:: write_div(u8 byte) {
-	div = 0;
-	counter = 0;
-	prev_and = false;
+	update_counter(0);
 }
 u8 Timer:: read_tac() {
 	return tac;
 }
 void Timer::write_tac(u8 byte) {
+	bool prev = prev_and;
+	prev_and &= ((byte & 4) >> 2);
+	detect_edge(prev, prev_and);
 	tac = byte;
 }

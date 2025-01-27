@@ -17,18 +17,19 @@ public:
 	void write_tac(u8 byte);
 
 private:
-	u32 get_freq();
+	void update_counter(u16 val);
 	void do_tima();
 	Mmu* mem;
-	bool prev_and = false;
-	bool overflow = false;
-	u8 tima = 0x00;
-	u8 tma = 0x00;
-	u8 div = 0xAB;
-	u8 tac = 0xF8;
-	u16 counter = 0xAB00;
-	u16 old_counter = 0xAB00;
+	u8 prev_and = false;
+	u8 tima;
+	u8 tma;
+	u8 tac;
+	u16 counter;
+	bool tima_reload_cycle;
+	u8 cycles_til_tima_irq = 0;
+	void detect_edge(bool before, bool after);
 };
+
 
 
 namespace timer {

@@ -10,6 +10,9 @@ public:
 	Mmu* mmu;
 	void scan_vram(GLuint* framebuffer);
 	void render_bg_tilemap();
+	void render_sprites();
+	GLuint sprite_buffer8[64 * 40] = {};
+	GLuint sprite_buffer16[64 * 80] = {};
 
 	void tick(u32 cycles);
 
@@ -42,12 +45,13 @@ public:
 	void write_oam_ram(u16 address, u8 byte);
 	GLuint display_buffer[160 * 144] = {};
 	GLuint bg_buffer[256 * 256] = {};
-	void get_bg_line(GLuint* bg_line);
+
 	u8 get_state();
 
 
+
 private:
-	u8 vram[0x1FFF] = {};
+	u8 vram[0x1FFF + 1] = {};
 	u8 oam_ram[0x9F + 1] = {};
 	u8 cur_state = State::HBLANK;
 	u32 cycles_remaining = 0;
@@ -75,6 +79,8 @@ private:
 	bool cur_stat = false;
 	bool prev_stat = false;
 
+	int win_counter = 0;
+
 	u8 read_bgp0();
 	u8 read_bgp1();
 	u8 read_bgp2();
@@ -85,11 +91,54 @@ private:
 	u8 read_ppu_mode();
 	void write_ppu_mode(u8 state);
 	void draw_line();
+	void get_bg_line(GLuint* bg_line, u8* bg_line_data);
+	void get_window_line(GLuint* window_line, u8* window_line_data);
 
 	void calc_stat(u8 mode);
+
+	u8 cur_palette[4] = { 0, 0, 0, 0 };
+
+	RGBA cur_theme_white = { 0x9B, 0XBC, 0X0F, 255 };
+	RGBA cur_theme_light_gray = { 0x8B, 0xAC, 0x0F, 255 };
+	RGBA cur_theme_dark_gray = { 0x30, 0x62, 0x30, 255 };
+	RGBA cur_theme_black = { 0x0F, 0x38, 0x0F, 255 };
+
+
+	RGBA color0 = { 0x9B, 0XBC, 0X0F, 255 };
+	RGBA color1 = { 0x8B, 0xAC, 0x0F, 255 };
+	RGBA color2 = { 0x30, 0x62, 0x30, 255 };
+	RGBA color3 = { 0x0F, 0x38, 0x0F, 255 };
+	void set_palette();
 };
 
+class Sprite {
+public:
+	u8 y;
+	u8 x;
+	u8 tile;
+	bool priority;
+	bool y_flip;
+	bool x_flip;
+	bool palette;
 
+	Sprite() {
+		this->y = 0;
+		this->x = 0;
+		this->tile = 0;
+		this->priority = false;
+		this->y_flip = false;
+		this->x_flip = false;
+		this->palette = false;
+	}
+
+	void set_flags(u8 flags) {
+		this->priority = flags & (1 << 7);
+		this->y_flip = flags & (1 << 6);
+		this->x_flip = flags & (1 << 5);
+		this->palette = flags & (1 << 4);
+	}
+
+};
 
 
 

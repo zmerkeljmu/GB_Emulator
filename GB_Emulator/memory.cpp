@@ -34,7 +34,7 @@ u8 Mmu::read_byte(u16 address) {
 		return 0;
 	if (address <= IO_END) {//IO registers
 		if (address == hardware_reg::JOYP)
-			return 0xFF;
+			return cpu->read_joyp();
 		else if (address == hardware_reg::SB)
 			return 0xFF;
 		else if (address == hardware_reg::SC)
@@ -47,8 +47,10 @@ u8 Mmu::read_byte(u16 address) {
 			return timer->read_tma();
 		else if (address == hardware_reg::TAC)
 			return timer->read_tac();
-		else if (address == hardware_reg::IF)
+		else if (address == hardware_reg::IF) {
+			printf("tima: %d\n", timer->read_tima());
 			return cpu->read_if();
+		}
 		else if (address >= 0xFF10 && address <= 0xFF3F)
 			return 0xFF;
 		else if (address == hardware_reg::LCDC)
@@ -59,8 +61,10 @@ u8 Mmu::read_byte(u16 address) {
 			return ppu->read_scy();
 		else if (address == hardware_reg::SCX)
 			return ppu->read_scx();
-		else if (address == hardware_reg::LY)
+		else if (address == hardware_reg::LY) {
 			return ppu->read_ly();
+			return 0x90;
+		}
 		else if (address == hardware_reg::LYC)
 			return ppu->read_lyc();
 		else if (address == hardware_reg::DMA)//UNIMPLEMENTED
@@ -109,7 +113,7 @@ void Mmu::write_byte(u16 address, u8 byte) {
 		return;
 	else if (address <= IO_END) {//IO registers
 		if (address == hardware_reg::JOYP)//mixed write/read register
-			return;
+			cpu->write_joyp(byte);
 		else if (address == hardware_reg::SB) {
 			printf("%c", byte);
 			return;
@@ -141,8 +145,11 @@ void Mmu::write_byte(u16 address, u8 byte) {
 			return;
 		else if (address == hardware_reg::LYC)
 			return ppu->write_lyc(byte);
-		else if (address == hardware_reg::DMA)
+		else if (address == hardware_reg::DMA) {
+			dma = byte;
 			execute_dma(byte);
+		
+		}
 		else if (address == hardware_reg::BGP)
 			ppu->write_bgp(byte);
 		else if (address == hardware_reg::OBP0)
@@ -173,7 +180,6 @@ void Mmu::set_bit_reg(u16 address, u8 bit, u8 value) {
 	u8 val = this->read_byte(address);
 	u8set_bit(bit, &val, value);
 	this->write_byte(address, val);
-	return;
 }
 
 void Mmu::set_ppu(PPU* ppu) {
@@ -191,9 +197,12 @@ void Mmu::set_timer(Timer* timer) {
 void Mmu::execute_dma(u8 address) {
 	u16 init_address = address << 8;
 	u16 init_write_addres = OAM_START;
+	printf("execute dma %x\n", init_address);
 
 	for (int i = 0; i < 160; i++) {
 		u16 write_address = init_write_addres + i;
 		ppu->write_oam_ram(init_write_addres + i, read_byte(init_address + i));
 	}
+
+	dma = 0xFF;
 }

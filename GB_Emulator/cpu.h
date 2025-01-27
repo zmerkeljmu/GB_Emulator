@@ -3,7 +3,8 @@
 #include "memory.h"
 #include "instruction.h"
 #include "cart.h"
-
+#include <fstream>
+#include <iomanip>
 
 
 class Cpu {
@@ -11,6 +12,7 @@ class Cpu {
 public :
 	Cpu(Mmu* memory);
 
+	void log_state();
 	int step();
 
 	instruction fetch_instruction();
@@ -79,8 +81,19 @@ public :
 	void write_if(u8 byte);
 
 
-	//debug tools
-	const char* next_instruction();
+	u8 joyp = 0xCF;
+	u8 buttons_state;
+	u8 read_joyp();
+	void write_joyp(u8 byte);
+
+	u8 button_right;
+	u8 button_left;
+	u8 button_up;
+	u8 button_down;
+	u8 button_a;
+	u8 button_b;
+	u8 button_select;
+	u8 button_start;
 
 private:
 	Instruction_list instruction_list;

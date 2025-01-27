@@ -80,6 +80,8 @@ void PPU::tick(u32 cycles) {
             if (ly == 143) {
                 vblank_remaining = 10;
                 to_vblank(overflow);
+                calc_stat(1 << stat_reg::MODE_1);
+                mmu->write_byte(hardware_reg::IF, mmu->read_byte(hardware_reg::IF) | 1 << interrupt::VBLANK);
             }
             else
                 to_oam_search(overflow);
@@ -97,12 +99,14 @@ void PPU::tick(u32 cycles) {
             }
             else {
                 to_oam_search(overflow);
+				win_counter = 0;
             }
             break;
         default:
             exit(0);
             break;
         }
+        
     }
     else {
         cycles_remaining -= tcycles;
@@ -138,8 +142,6 @@ void PPU::to_vblank(u32 tcycle_overflow) {
     cycles_remaining = VBLANK_CYCLES - tcycle_overflow;
     write_ppu_mode(VBLANK);
     ly++;
-    calc_stat(1 << stat_reg::MODE_1);
-    mmu->write_byte(hardware_reg::IF, interrupt::VBLANK);
 }
 
 
@@ -270,12 +272,14 @@ tile PPU::read_tile(u16 address) {
 }
 
 /*
+Render all of VRAM to a framebuffer
 const GLuint width = 128;
 const GLuint height = 192;
 */
 void PPU::scan_vram(GLuint* framebuffer) {
 	tile* tiles = new tile[384];
-    
+
+
 	for (int i = 0; i < 384; i++) {
 		u16 address = 0x8000 + (16 * i);
         tiles[i] = read_tile(address);
@@ -289,17 +293,17 @@ void PPU::scan_vram(GLuint* framebuffer) {
                 int pixel_offset = ((row * 8 + tile_row) * 128) + (column * 8 + tile_col);
                 GLuint color = 0;
                 switch (tiles[j].data[tile_row][tile_col]) {
-                case WHITE:
-                    memcpy(&color, &white, sizeof(RGBA));
+                case 0:
+                    memcpy(&color, &color0, sizeof(RGBA));
                     break;
-                case LIGHT_GRAY:
-                    memcpy(&color, &light_gray, sizeof(RGBA));
+                case 1:
+                    memcpy(&color, &color1, sizeof(RGBA));
                     break;
-                case DARK_GRAY:
-                    memcpy(&color, &dark_gray, sizeof(RGBA));
+                case 2:
+                    memcpy(&color, &color2, sizeof(RGBA));
                     break;
-                case BLACK:
-                    memcpy(&color, &black, sizeof(RGBA));
+                case 3:
+                    memcpy(&color, &color3, sizeof(RGBA));
                     break;
                 default:
                     break;
@@ -316,6 +320,7 @@ void PPU::scan_vram(GLuint* framebuffer) {
 }
 
 void PPU::render_bg_tilemap() {
+	set_palette();
     u16 map_area;
     tile* tiles = new tile[32 * 32];
     u16 base;
@@ -345,16 +350,16 @@ void PPU::render_bg_tilemap() {
                 GLuint color = 0;
                 switch (tiles[j].data[tile_row][tile_col]) {
                 case WHITE:
-                    memcpy(&color, &white, sizeof(RGBA));
+                    memcpy(&color, &color0, sizeof(RGBA));
                     break;
                 case LIGHT_GRAY:
-                    memcpy(&color, &light_gray, sizeof(RGBA));
+                    memcpy(&color, &color1, sizeof(RGBA));
                     break;
                 case DARK_GRAY:
-                    memcpy(&color, &dark_gray, sizeof(RGBA));
+                    memcpy(&color, &color2, sizeof(RGBA));
                     break;
                 case BLACK:
-                    memcpy(&color, &black, sizeof(RGBA));
+                    memcpy(&color, &color3, sizeof(RGBA));
                     break;
                 default:
                     break;
@@ -369,14 +374,25 @@ void PPU::render_bg_tilemap() {
         }
     }
 }
-
-void PPU::get_bg_line(GLuint* bg_line) {
+//get the line of the background
+void PPU::get_bg_line(GLuint* bg_line_160, u8* bg_line_data_160) {
     tile tiles[32];
     u16 map_area;
+    GLuint bg_line[256];
+    u8 bg_line_data[256];
 
     int tile_row = ((scy + ly) / 8) % 32;
     int line_in_tile = ly % 8;
 
+    /*
+    if (!(lcdc & 1 << lcdc::BG_ENABLE)) {
+		for (int i = 0; i < 256; i++) {
+			memcpy(&bg_line[i], &color0, sizeof(RGBA));
+			bg_line_data[i] = 0;
+		}
+		return;
+    }
+    */
     u16 base;
     if (u8read_bit(lcdc::BG_TILE_MAP, &lcdc))
         map_area = MAP1_START;
@@ -391,24 +407,29 @@ void PPU::get_bg_line(GLuint* bg_line) {
         if (base == 0x8000)
             tiles[num_tile] = read_tile(0x8000 + read_vram(map_area + num_tile + (32 * tile_row)) * 16);
         else
-            tiles[num_tile] = read_tile(0x8800 + (i8)read_vram(map_area + num_tile + (32 * tile_row)) * 16);
+            tiles[num_tile] = read_tile(0x9000 + (i8)read_vram(map_area + num_tile + (32 * tile_row)) * 16);
     }
+
     
     for (int tile_index = 0; tile_index < 32; tile_index++) {
         for (int pixel_index = 0; pixel_index < 8; pixel_index++) {
             GLuint color = 0;
             switch (tiles[tile_index].data[line_in_tile][pixel_index]) {
             case WHITE:
-                memcpy(&color, &white, sizeof(RGBA));
+				bg_line_data[(tile_index * 8) + pixel_index] = WHITE;
+                memcpy(&color, &color0, sizeof(RGBA));
                 break;
             case LIGHT_GRAY:
-                memcpy(&color, &light_gray, sizeof(RGBA));
+				bg_line_data[(tile_index * 8) + pixel_index] = LIGHT_GRAY;
+                memcpy(&color, &color1, sizeof(RGBA));
                 break;
             case DARK_GRAY:
-                memcpy(&color, &dark_gray, sizeof(RGBA));
+				bg_line_data[(tile_index * 8) + pixel_index] = DARK_GRAY;
+                memcpy(&color, &color2, sizeof(RGBA));
                 break;
             case BLACK:
-                memcpy(&color, &black, sizeof(RGBA));
+				bg_line_data[(tile_index * 8) + pixel_index] = BLACK;
+                memcpy(&color, &color3, sizeof(RGBA));
                 break;
             default:
                 printf("ERROR\n");
@@ -418,32 +439,191 @@ void PPU::get_bg_line(GLuint* bg_line) {
             bg_line[(tile_index * 8) + pixel_index] = color;
         }
     }
-}
 
-void PPU::draw_line() {
-    if (ly > 143)
-        return;
-    GLuint bg_line[256];
-    get_bg_line(bg_line);
-    int display_offset;
-    
     u8 bg_y = (scy + ly) % 256;
     u8 bg_x;
     for (int screen_x = 0; screen_x < 160; screen_x++) {
         bg_x = (scx + screen_x) % 256;
-        display_offset = (ly * 160) + screen_x;
-        display_buffer[display_offset] = bg_line[bg_x];
+		bg_line_data_160[screen_x] = bg_line_data[bg_x];
+        bg_line_160[screen_x] = bg_line[bg_x];
     }
+}
+
+void PPU::get_window_line(GLuint* bg_line, u8* bg_line_data) {
+    // Ensure window is enabled
+    if (!(lcdc & (1 << lcdc::WIN_ENABLE)))
+        return;
+
+    // Start rendering at or after WY
+    if (ly < wy)
+        return;
+
+	if (wx < 0 || wx > 166) {
+		printf("Window X start is off-screen.\n");
+		return;
+	}
+
+
+    int x_start = wx - 7;
+
+	if (wy < 0 || wy > 143) {
+		printf("Window Y start is off-screen.\n");
+		return;
+	}
+    //aslpejfhase;ljkfh
+    int window_line = win_counter;
+    // Determine tile map and base address
+    u16 map_area = (u8read_bit(lcdc::WIN_TILE_MAP, &lcdc)) ? MAP1_START : MAP0_START;
+    u16 base = (u8read_bit(lcdc::TILE_DATA, &lcdc)) ? 0x8000 : 0x8800;
+
+    // Load tiles for the current row
+    tile tiles[32] = {};
+    int tile_row = window_line / 8 ;
+    for (int num_tile = 0; num_tile < 32; num_tile++) {
+        u16 tile_address = map_area + num_tile + (32 * tile_row);
+        u8 tile_id = read_vram(tile_address);
+
+        if (base == 0x8000)
+            tiles[num_tile] = read_tile(0x8000 + tile_id * 16);
+        else
+            tiles[num_tile] = read_tile(0x9000 + (i8)tile_id * 16);
+    }
+
+    // Render the window line
+    int line_in_tile = window_line % 8;
+    for (int tile_index = 0; tile_index < 32; tile_index++) {
+        for (int pixel_index = 0; pixel_index < 8; pixel_index++) {
+            int x_index = (tile_index * 8) + pixel_index + x_start;
+
+            if (x_index < 0 || x_index > 159)
+                continue; // Skip out-of-bounds pixels
+
+            GLuint color = 0;
+            switch (tiles[tile_index].data[line_in_tile][pixel_index]) {
+            case WHITE:
+                memcpy(&color, &color0, sizeof(RGBA));
+                break;
+            case LIGHT_GRAY:
+                memcpy(&color, &color1, sizeof(RGBA));
+                break;
+            case DARK_GRAY:
+                memcpy(&color, &color2, sizeof(RGBA));
+                break;
+            case BLACK:
+                memcpy(&color, &color3, sizeof(RGBA));
+                break;
+            default:
+                printf("Unexpected pixel value.\n");
+                break;
+            }
+
+            // Overwrite the corresponding position in the background line
+            bg_line[x_index] = color;
+            bg_line_data[x_index] = tiles[tile_index].data[line_in_tile][pixel_index];
+        }
+    }
+	win_counter++;
+}
+
+
+void PPU::draw_line() {
+    if (ly > 143)
+        return;
+    set_palette();
+    
+	GLuint bg_line[160];
+	u8 bg_line_data[160];
+    get_bg_line(bg_line, bg_line_data);
+	get_window_line(bg_line, bg_line_data);
+    for (int i = 0; i < 160; i++) {
+		display_buffer[(ly * 160) + i] = bg_line[i];
+	}
+
 }
 
 void PPU::calc_stat(u8 mode) {
     prev_stat = cur_stat;
-    cur_stat = (mode & stat) && (ly == lyc);
+    cur_stat = (mode & stat) || (ly == lyc);
 
     if (cur_stat && !prev_stat)
-        mmu->set_bit_reg(hardware_reg::IF, interrupt::LCD, 1);
+        mmu->write_byte(hardware_reg::IF, mmu->read_byte(hardware_reg::IF) | 1 << interrupt::LCD);
 }
 
 u8 PPU::get_state() {
     return this->cur_state;
+}
+
+void PPU::set_palette() {
+    cur_palette[0] = read_bgp0();
+    cur_palette[1] = read_bgp1();
+    cur_palette[2] = read_bgp2();
+    cur_palette[3] = read_bgp3();
+
+    switch (cur_palette[0]) {
+    case 0:
+        memcpy(&color0, &cur_theme_white, sizeof(RGBA));
+        break;
+    case 1:
+        memcpy(&color0, &cur_theme_light_gray, sizeof(RGBA));
+        break;
+    case 2:
+        memcpy(&color0, &cur_theme_dark_gray, sizeof(RGBA));
+        break;
+    case 3:
+        memcpy(&color0, &cur_theme_black, sizeof(RGBA));
+        break;
+    default:
+        break;
+    }
+
+    switch (cur_palette[1]) {
+    case 0:
+        memcpy(&color1, &cur_theme_white, sizeof(RGBA));
+        break;
+    case 1:
+        memcpy(&color1, &cur_theme_light_gray, sizeof(RGBA));
+        break;
+    case 2:
+        memcpy(&color1, &cur_theme_dark_gray, sizeof(RGBA));
+        break;
+    case 3:
+        memcpy(&color1, &cur_theme_black, sizeof(RGBA));
+        break;
+    default:
+        break;
+    }
+
+    switch (cur_palette[2]) {
+    case 0:
+        memcpy(&color2, &cur_theme_white, sizeof(RGBA));
+        break;
+    case 1:
+        memcpy(&color2, &cur_theme_light_gray, sizeof(RGBA));
+        break;
+    case 2:
+        memcpy(&color2, &cur_theme_dark_gray, sizeof(RGBA));
+        break;
+    case 3:
+        memcpy(&color2, &cur_theme_black, sizeof(RGBA));
+        break;
+    default:
+        break;
+    }
+
+    switch (cur_palette[3]) {
+    case 0:
+        memcpy(&color3, &cur_theme_white, sizeof(RGBA));
+        break;
+    case 1:
+        memcpy(&color3, &cur_theme_light_gray, sizeof(RGBA));
+        break;
+    case 2:
+        memcpy(&color3, &cur_theme_dark_gray, sizeof(RGBA));
+        break;
+    case 3:
+        memcpy(&color3, &cur_theme_black, sizeof(RGBA));
+        break;
+    default:
+        break;
+    }
 }

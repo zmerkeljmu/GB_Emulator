@@ -20,8 +20,8 @@ public:
 	void set_timer(Timer* timer);
 
 private:
-	u8 wram[WRAM_END - WRAM_START] = {};
-	u8 hram[HRAM_END - HRAM_START] = {};
+	u8 wram[WRAM_END - WRAM_START + 1] = {};
+	u8 hram[HRAM_END - HRAM_START + 1] = {};
 	cartridge* cart;
 	bool testing;
 	PPU* ppu = nullptr;

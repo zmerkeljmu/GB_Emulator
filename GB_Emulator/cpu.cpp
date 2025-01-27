@@ -2,7 +2,7 @@
 
 
 Cpu::Cpu(Mmu* memory) {
-	
+
 	pc = 0x100;
 	sp = 0xFFFE;
 	reg_a = 0x01;
@@ -19,38 +19,41 @@ Cpu::Cpu(Mmu* memory) {
 	cb = false;
 	pending_ei = false;
 	mem = memory;
-	
+
 	debug = true;
+
+	// Create or overwrite the log file on initialization
+	std::ofstream logfile("cpu_log.txt");
+	logfile.close();
 
 	bootrom();
 }
 
 int Cpu::step() {
-	bool set_ime = this->pending_ei;
-	int cycles = 0;
+    bool set_ime = this->pending_ei;
+    int cycles = 0;
 
-	if (handle_interrupts())
-		cycles += 5;
-	
-	if (!halted) {
-		//fetch	
-		instruction inst = fetch_instruction();
-		if (debug) {
-			printf("Instruction: %s\n", inst.name);
-		}
-		//decode
-		//execute
-		cycles += inst.function(this);
-	}
-	else {
-		cycles += 1;
-	}
+    if (handle_interrupts())
+        cycles += 5;
 
-	if (set_ime) {
-		this->ime = true;
-		this->pending_ei = false;
-	}
-	return cycles;
+    if (!halted) {
+        //fetch	
+        if (debug) {
+            log_state();
+        }
+        instruction inst = fetch_instruction();
+        //decode
+        //execute
+        cycles += inst.function(this);
+    } else {
+        cycles += 1;
+    }
+
+    if (set_ime) {
+        this->ime = true;
+        this->pending_ei = false;
+    }
+    return cycles;
 }
 
 
@@ -179,14 +182,14 @@ void Cpu::write_hl(u16 value) {
 }
 
 bool Cpu::handle_interrupts() {
+
 	u16 vector = 0;
-	//printf("IE: %x\n", mem->read_byte(hardware_reg::IE));
-	//printf("IF: %x\n", mem->read_byte(hardware_reg::IF));
+	
 
 	if (read_bit_IE(interrupt::VBLANK) && read_bit_IF(interrupt::VBLANK)) {
 		this->halted = false;
 		if (ime) {
-			if (debug)
+			//if (debug)
 				printf("VBLANK INTERRUPT\n");
 			clear_bit_IF(interrupt::VBLANK);
 			vector = interrupt::VBLANK_ADDR;
@@ -204,7 +207,7 @@ bool Cpu::handle_interrupts() {
 	else if (read_bit_IE(interrupt::TIMER) && read_bit_IF(interrupt::TIMER)) {
 		this->halted = false;
 		if (ime) {
-			if (debug)
+			//if (debug)
 				printf("TIMER INTERRUPT\n");
 			clear_bit_IF(interrupt::TIMER);
 			vector = interrupt::TIMER_ADDR;
@@ -267,7 +270,6 @@ void Cpu::push_pc() {
 }
 
 void Cpu::bootrom() {
-	mem->write_byte(hardware_reg::JOYP, 0xCF);
 	mem->write_byte(hardware_reg::SB, 0x00);
 	mem->write_byte(hardware_reg::SC, 0x7E);
 }
@@ -286,3 +288,52 @@ void Cpu::write_if(u8 byte) {
 	if_reg = byte;
 }
 
+u8 Cpu::read_joyp() {
+	u8 result = joyp | 0xCF; // Preserve unused upper bits (6 and 7), default lower bits to 1
+
+
+	if (!(joyp & 0x10)) { // P14 = 0 -> Directional buttons selected
+		result &= ~(0x0F); // Clear the lower 4 bits for directional buttons
+		result |= (~(button_down << 3 | button_up << 2 | button_left << 1 | button_right));
+	}
+	if (!(joyp & 0x20)) { // P15 = 0 -> Action buttons selected
+		result |= (~(button_start << 3 | button_select << 2 | button_b << 1 | button_a));
+	}
+
+	printf("joyp: %x\n", result);
+
+	return result;
+}
+
+void Cpu::write_joyp(u8 byte) {
+	joyp = 0b110000 & byte;
+}
+
+
+void Cpu::log_state() {
+	if (!cb) {
+		std::ofstream logfile("cpu_log.txt", std::ios_base::app);
+		if (logfile.is_open()) {
+			logfile << "A:" << std::hex << std::setw(2) << std::setfill('0') << (int)reg_a << " "
+					<< "F:" << std::hex << std::setw(2) << std::setfill('0') << (int)reg_f << " "
+					<< "B:" << std::hex << std::setw(2) << std::setfill('0') << (int)reg_b << " "
+					<< "C:" << std::hex << std::setw(2) << std::setfill('0') << (int)reg_c << " "
+					<< "D:" << std::hex << std::setw(2) << std::setfill('0') << (int)reg_d << " "
+					<< "E:" << std::hex << std::setw(2) << std::setfill('0') << (int)reg_e << " "
+					<< "H:" << std::hex << std::setw(2) << std::setfill('0') << (int)reg_h << " "
+					<< "L:" << std::hex << std::setw(2) << std::setfill('0') << (int)reg_l << " "
+					<< "SP:" << std::hex << std::setw(4) << std::setfill('0') << sp << " "
+					<< "PC:" << std::hex << std::setw(4) << std::setfill('0') << pc << " "
+					<< "PCMEM:" << std::hex << std::setw(2) << std::setfill('0') << (int)mem->read_byte(pc) << ","
+					<< std::hex << std::setw(2) << std::setfill('0') << (int)mem->read_byte(pc + 1) << ","
+					<< std::hex << std::setw(2) << std::setfill('0') << (int)mem->read_byte(pc + 2) << ","
+					<< std::hex << std::setw(2) << std::setfill('0') << (int)mem->read_byte(pc + 3) << " "
+					<< "IE:" << std::hex << std::setw(2) << std::setfill('0') << (int)read_ie() << " "
+					<< "IF:" << std::hex << std::setw(2) << std::setfill('0') << (int)read_if() << " "
+					<< "IME:" << ime << " "
+				<< "TAC" << std::hex << std::setw(2) << std::setfill('0') << (int)mem->read_byte(hardware_reg::TAC) << " "
+					<< "TIMA" << std::hex << std::setw(2) << std::setfill('0') << (int)mem->read_byte(hardware_reg::TIMA) << "\n";
+			logfile.close();
+		}
+	}
+}
