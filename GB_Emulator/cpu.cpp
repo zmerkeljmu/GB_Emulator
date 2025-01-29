@@ -291,16 +291,17 @@ void Cpu::write_if(u8 byte) {
 u8 Cpu::read_joyp() {
 	u8 result = joyp | 0xCF; // Preserve unused upper bits (6 and 7), default lower bits to 1
 
-
 	if (!(joyp & 0x10)) { // P14 = 0 -> Directional buttons selected
 		result &= ~(0x0F); // Clear the lower 4 bits for directional buttons
-		result |= (~(button_down << 3 | button_up << 2 | button_left << 1 | button_right));
+		result |= ((!button_down) << 3) | ((!button_up) << 2) | ((!button_left) << 1) | (!button_right);
 	}
 	if (!(joyp & 0x20)) { // P15 = 0 -> Action buttons selected
-		result |= (~(button_start << 3 | button_select << 2 | button_b << 1 | button_a));
+		result &= ~(0x0F); // Clear the lower 4 bits for action buttons
+		result |= ((!button_start) << 3) | ((!button_select) << 2) | ((!button_b) << 1) | (!button_a);
 	}
 
-	printf("joyp: %x\n", result);
+	// Debugging output
+	// printf("joyp: %x\n", result);
 
 	return result;
 }

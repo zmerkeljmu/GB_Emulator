@@ -1,6 +1,5 @@
 Sprites!
-	sprite palletes
-	please god do it in a smarter way than before
+	sprite flipping
 
 
 memory leaks

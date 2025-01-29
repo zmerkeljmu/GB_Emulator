@@ -259,6 +259,38 @@ u8 PPU::read_bgp3() {
     return (bgp & 0b11000000) >> 6;
 }
 
+u8 PPU::read_obj00() {
+    return (obp0 & 0b11);
+}
+
+u8 PPU::read_obj01() {
+    return (obp0 & 0b1100) >> 2;
+}
+
+u8 PPU::read_obj02() {
+    return (obp0 & 0b110000) >> 4;
+}
+
+u8 PPU::read_obj03() {
+	return (obp0 & 0b11000000) >> 6;
+}
+
+u8 PPU::read_obj10() {
+	return (obp1 & 0b11);
+}
+
+u8 PPU::read_obj11() {
+	return (obp1 & 0b1100) >> 2;
+}
+
+u8 PPU::read_obj12() {
+	return (obp1 & 0b110000) >> 4;
+}
+
+u8 PPU::read_obj13() {
+	return (obp1 & 0b11000000) >> 6;
+}
+
 tile PPU::read_tile(u16 address) {
     tile cur_tile;
     for (int line = 0; line < 8; line++) {
@@ -293,22 +325,8 @@ void PPU::scan_vram(GLuint* framebuffer) {
             for (int tile_col = 0; tile_col < 8; tile_col++) {
                 int pixel_offset = ((row * 8 + tile_row) * 128) + (column * 8 + tile_col);
                 GLuint color = 0;
-                switch (tiles[j].data[tile_row][tile_col]) {
-                case 0:
-                    memcpy(&color, &color0, sizeof(RGBA));
-                    break;
-                case 1:
-                    memcpy(&color, &color1, sizeof(RGBA));
-                    break;
-                case 2:
-                    memcpy(&color, &color2, sizeof(RGBA));
-                    break;
-                case 3:
-                    memcpy(&color, &color3, sizeof(RGBA));
-                    break;
-                default:
-                    break;
-                }
+                u8 pixel_value = tiles[j].data[tile_row][tile_col];
+                memcpy(&color, &cur_palette_colors[pixel_value], sizeof(RGBA));
                 framebuffer[pixel_offset] = color;
             }
         }
@@ -349,22 +367,8 @@ void PPU::render_bg_tilemap() {
             for (int tile_col = 0; tile_col < 8; tile_col++) {
                 int pixel_offset = ((row * 8 + tile_row) * 256) + (column * 8 + tile_col);
                 GLuint color = 0;
-                switch (tiles[j].data[tile_row][tile_col]) {
-                case WHITE:
-                    memcpy(&color, &color0, sizeof(RGBA));
-                    break;
-                case LIGHT_GRAY:
-                    memcpy(&color, &color1, sizeof(RGBA));
-                    break;
-                case DARK_GRAY:
-                    memcpy(&color, &color2, sizeof(RGBA));
-                    break;
-                case BLACK:
-                    memcpy(&color, &color3, sizeof(RGBA));
-                    break;
-                default:
-                    break;
-                }
+                u8 pixel_value = tiles[j].data[tile_row][tile_col];
+                memcpy(&color, &cur_palette_colors[pixel_value], sizeof(RGBA));
                 bg_buffer[pixel_offset] = color;
             }
         }
@@ -385,15 +389,15 @@ void PPU::get_bg_line(GLuint* bg_line_160, u8* bg_line_data_160) {
     int tile_row = ((scy + ly) / 8) % 32;
     int line_in_tile = ly % 8;
 
-    /*
+    
     if (!(lcdc & 1 << lcdc::BG_ENABLE)) {
-		for (int i = 0; i < 256; i++) {
-			memcpy(&bg_line[i], &color0, sizeof(RGBA));
+		for (int i = 0; i < 160; i++) {
+			memcpy(&bg_line_160[i], &cur_palette_colors[0], sizeof(RGBA));
 			bg_line_data[i] = 0;
 		}
 		return;
     }
-    */
+    
     u16 base;
     if (u8read_bit(lcdc::BG_TILE_MAP, &lcdc))
         map_area = MAP1_START;
@@ -415,28 +419,8 @@ void PPU::get_bg_line(GLuint* bg_line_160, u8* bg_line_data_160) {
     for (int tile_index = 0; tile_index < 32; tile_index++) {
         for (int pixel_index = 0; pixel_index < 8; pixel_index++) {
             GLuint color = 0;
-            switch (tiles[tile_index].data[line_in_tile][pixel_index]) {
-            case WHITE:
-				bg_line_data[(tile_index * 8) + pixel_index] = WHITE;
-                memcpy(&color, &color0, sizeof(RGBA));
-                break;
-            case LIGHT_GRAY:
-				bg_line_data[(tile_index * 8) + pixel_index] = LIGHT_GRAY;
-                memcpy(&color, &color1, sizeof(RGBA));
-                break;
-            case DARK_GRAY:
-				bg_line_data[(tile_index * 8) + pixel_index] = DARK_GRAY;
-                memcpy(&color, &color2, sizeof(RGBA));
-                break;
-            case BLACK:
-				bg_line_data[(tile_index * 8) + pixel_index] = BLACK;
-                memcpy(&color, &color3, sizeof(RGBA));
-                break;
-            default:
-                printf("ERROR\n");
-                exit(0);
-                break;
-            }
+            u8 pixel_value = tiles[tile_index].data[line_in_tile][pixel_index];
+            memcpy(&color, &cur_palette_colors[pixel_value], sizeof(RGBA));
             bg_line[(tile_index * 8) + pixel_index] = color;
         }
     }
@@ -500,30 +484,17 @@ void PPU::get_window_line(GLuint* bg_line, u8* bg_line_data) {
 
             GLuint color = 0;
 			u8 pixel_value = tiles[tile_index].data[line_in_tile][pixel_index];
-            switch (pixel_value) {
-            case WHITE:
-                memcpy(&color, &color0, sizeof(RGBA));
-                break;
-            case LIGHT_GRAY:
-                memcpy(&color, &color1, sizeof(RGBA));
-                break;
-            case DARK_GRAY:
-                memcpy(&color, &color2, sizeof(RGBA));
-                break;
-            case BLACK:
-                memcpy(&color, &color3, sizeof(RGBA));
-                break;
-            default:
-                printf("Unexpected pixel value.\n");
-                break;
-            }
-
+            memcpy(&color, &cur_palette_colors[pixel_value], sizeof(RGBA));
             // Overwrite the corresponding position in the background line
             bg_line[x_index] = color;
             bg_line_data[x_index] = pixel_value;
         }
     }
 	win_counter++;
+}
+
+static bool compare_sprites(const Sprite& a, const Sprite& b) {
+    return a.x > b.x; // Sort in descending order based on x
 }
 
 void PPU::get_sprite_line(GLuint* sprite_line, u8* bg_line_data) {
@@ -534,9 +505,13 @@ void PPU::get_sprite_line(GLuint* sprite_line, u8* bg_line_data) {
     if (u8read_bit(lcdc::OBJ_SIZE, &lcdc))
         sprite_size = 16;
 
+    if (!u8read_bit(lcdc::OBJ_ENABLE, &lcdc))
+        return;
+
     //find up to 10 sprites that are rendered on this line
-    while (found_sprites < 10 && address_offset < 40) {
+    while (found_sprites < 10 && address_offset < 160) {
         Sprite sprite;
+        
         u8 y = read_oam_ram(OAM_START + address_offset);
         u8 x = read_oam_ram(OAM_START + address_offset + 1);
         u8 tile = read_oam_ram(OAM_START + address_offset + 2);
@@ -544,17 +519,20 @@ void PPU::get_sprite_line(GLuint* sprite_line, u8* bg_line_data) {
         
         sprite.set_flags(y, x, tile, flags);
 
-        if (ly >= (sprite.y - 16) && ly <= (sprite.y - sprite_size)) {
+        if (ly >= (sprite.y - 16) && ly < (sprite.y - 16 + sprite_size)) {
             sprites[found_sprites] = sprite;
             found_sprites++;
         }
-    }
+        address_offset += 4;
+    } 
 
     std::sort(sprites, sprites + found_sprites, compare_sprites);
     
     for (int sprite_index = 0; sprite_index < found_sprites; sprite_index++) {
         Sprite cur_sprite = sprites[sprite_index];
         tile sprite_tile = {};
+		GLuint* palette = cur_sprite.palette ? cur_obj1_palette_colors : cur_obj0_palette_colors;
+
         if (sprite_size == 16) {
             //check if the upper or lower tile should be selected
             if (ly >= (cur_sprite.y - 16) && ly < (cur_sprite.y - 8))
@@ -567,29 +545,38 @@ void PPU::get_sprite_line(GLuint* sprite_line, u8* bg_line_data) {
         }
         
         int tile_y = (ly - cur_sprite.y + 16) % 8;
+        if (sprite_size == 16) {
+            tile_y = (ly - (cur_sprite.y - 16)) % 8;
+        }
         
         for (int tile_x = 0; tile_x < 8; tile_x++) {
             int x_offset = cur_sprite.x - 8 + tile_x;
-            if (x_offset < 0)
+            if (x_offset < 0 || x_offset > 159)
                 continue;
-
+            GLuint color = 0;
+            //Priortized over the background
             if (!cur_sprite.priority) {
-                if (sprite_tile.data[tile_y][tile_x] != 0) {
-                
+                //if the tile is not transparent
+                u8 pixel_data = sprite_tile.data[tile_y][tile_x];
+                if (pixel_data != 0) {
+                    memcpy(&color, &palette[pixel_data], sizeof(RGBA));
+                    sprite_line[x_offset] = color;
+                }
+            }
+            //Only draw over background color 0
+            else {
+                u8 sprite_pixel = sprite_tile.data[tile_y][tile_x];
+                u8 bg_pixel = bg_line_data[x_offset];
+                if (bg_pixel == 0) {
+                    memcpy(&color, &palette[sprite_pixel], sizeof(RGBA));
+                    sprite_line[x_offset] = color;
                 }
             }
         }
-
-
-
     }
-
-
 }
 
-bool compare_sprites(const Sprite& a, const Sprite& b) {
-    return a.x > b.x; // Sort in descending order based on x
-}
+
 
 void PPU::draw_line() {
     if (ly > 143)
@@ -600,6 +587,7 @@ void PPU::draw_line() {
 	u8 bg_line_data[160];
     get_bg_line(bg_line, bg_line_data);
 	get_window_line(bg_line, bg_line_data);
+    get_sprite_line(bg_line, bg_line_data);
     for (int i = 0; i < 160; i++) {
 		display_buffer[(ly * 160) + i] = bg_line[i];
 	}
@@ -626,16 +614,16 @@ void PPU::set_palette() {
 
     switch (cur_palette[0]) {
     case 0:
-        memcpy(&color0, &cur_theme_white, sizeof(RGBA));
+        memcpy(&cur_palette_colors[0], &cur_theme_white, sizeof(RGBA));
         break;
     case 1:
-        memcpy(&color0, &cur_theme_light_gray, sizeof(RGBA));
+        memcpy(&cur_palette_colors[0], &cur_theme_light_gray, sizeof(RGBA));
         break;
     case 2:
-        memcpy(&color0, &cur_theme_dark_gray, sizeof(RGBA));
+        memcpy(&cur_palette_colors[0], &cur_theme_dark_gray, sizeof(RGBA));
         break;
     case 3:
-        memcpy(&color0, &cur_theme_black, sizeof(RGBA));
+        memcpy(&cur_palette_colors[0], &cur_theme_black, sizeof(RGBA));
         break;
     default:
         break;
@@ -643,16 +631,16 @@ void PPU::set_palette() {
 
     switch (cur_palette[1]) {
     case 0:
-        memcpy(&color1, &cur_theme_white, sizeof(RGBA));
+        memcpy(&cur_palette_colors[1], &cur_theme_white, sizeof(RGBA));
         break;
     case 1:
-        memcpy(&color1, &cur_theme_light_gray, sizeof(RGBA));
+        memcpy(&cur_palette_colors[1], &cur_theme_light_gray, sizeof(RGBA));
         break;
     case 2:
-        memcpy(&color1, &cur_theme_dark_gray, sizeof(RGBA));
+        memcpy(&cur_palette_colors[1], &cur_theme_dark_gray, sizeof(RGBA));
         break;
     case 3:
-        memcpy(&color1, &cur_theme_black, sizeof(RGBA));
+        memcpy(&cur_palette_colors[1], &cur_theme_black, sizeof(RGBA));
         break;
     default:
         break;
@@ -660,16 +648,16 @@ void PPU::set_palette() {
 
     switch (cur_palette[2]) {
     case 0:
-        memcpy(&color2, &cur_theme_white, sizeof(RGBA));
+        memcpy(&cur_palette_colors[2], &cur_theme_white, sizeof(RGBA));
         break;
     case 1:
-        memcpy(&color2, &cur_theme_light_gray, sizeof(RGBA));
+        memcpy(&cur_palette_colors[2], &cur_theme_light_gray, sizeof(RGBA));
         break;
     case 2:
-        memcpy(&color2, &cur_theme_dark_gray, sizeof(RGBA));
+        memcpy(&cur_palette_colors[2], &cur_theme_dark_gray, sizeof(RGBA));
         break;
     case 3:
-        memcpy(&color2, &cur_theme_black, sizeof(RGBA));
+        memcpy(&cur_palette_colors[2], &cur_theme_black, sizeof(RGBA));
         break;
     default:
         break;
@@ -677,18 +665,168 @@ void PPU::set_palette() {
 
     switch (cur_palette[3]) {
     case 0:
-        memcpy(&color3, &cur_theme_white, sizeof(RGBA));
+        memcpy(&cur_palette_colors[3], &cur_theme_white, sizeof(RGBA));
         break;
     case 1:
-        memcpy(&color3, &cur_theme_light_gray, sizeof(RGBA));
+        memcpy(&cur_palette_colors[3], &cur_theme_light_gray, sizeof(RGBA));
         break;
     case 2:
-        memcpy(&color3, &cur_theme_dark_gray, sizeof(RGBA));
+        memcpy(&cur_palette_colors[3], &cur_theme_dark_gray, sizeof(RGBA));
         break;
     case 3:
-        memcpy(&color3, &cur_theme_black, sizeof(RGBA));
+        memcpy(&cur_palette_colors[3], &cur_theme_black, sizeof(RGBA));
         break;
     default:
         break;
     }
+
+	obj_palette0[0] = read_obj00();
+	obj_palette0[1] = read_obj01();
+	obj_palette0[2] = read_obj02();
+	obj_palette0[3] = read_obj03();
+
+
+    switch (obj_palette0[0]) {
+    case 0:
+        memcpy(&cur_obj0_palette_colors[0], &cur_theme_white, sizeof(RGBA));
+        break;
+    case 1:
+        memcpy(&cur_obj0_palette_colors[0], &cur_theme_light_gray, sizeof(RGBA));
+        break;
+    case 2:
+        memcpy(&cur_obj0_palette_colors[0], &cur_theme_dark_gray, sizeof(RGBA));
+        break;
+    case 3:
+        memcpy(&cur_obj0_palette_colors[0], &cur_theme_black, sizeof(RGBA));
+        break;
+    default:
+        break;
+    }
+
+    switch (obj_palette0[1]) {
+    case 0:
+        memcpy(&cur_obj0_palette_colors[1], &cur_theme_white, sizeof(RGBA));
+        break;
+    case 1:
+        memcpy(&cur_obj0_palette_colors[1], &cur_theme_light_gray, sizeof(RGBA));
+        break;
+    case 2:
+        memcpy(&cur_obj0_palette_colors[1], &cur_theme_dark_gray, sizeof(RGBA));
+        break;
+    case 3:
+        memcpy(&cur_obj0_palette_colors[1], &cur_theme_black, sizeof(RGBA));
+        break;
+    default:
+        break;
+    }
+
+    switch (obj_palette0[2]) {
+    case 0:
+        memcpy(&cur_obj0_palette_colors[2], &cur_theme_white, sizeof(RGBA));
+        break;
+    case 1:
+        memcpy(&cur_obj0_palette_colors[2], &cur_theme_light_gray, sizeof(RGBA));
+        break;
+    case 2:
+        memcpy(&cur_obj0_palette_colors[2], &cur_theme_dark_gray, sizeof(RGBA));
+        break;
+    case 3:
+        memcpy(&cur_obj0_palette_colors[2], &cur_theme_black, sizeof(RGBA));
+        break;
+    default:
+        break;
+    }
+
+    switch (obj_palette0[3]) {
+    case 0:
+        memcpy(&cur_obj0_palette_colors[3], &cur_theme_white, sizeof(RGBA));
+        break;
+    case 1:
+        memcpy(&cur_obj0_palette_colors[3], &cur_theme_light_gray, sizeof(RGBA));
+        break;
+    case 2:
+        memcpy(&cur_obj0_palette_colors[3], &cur_theme_dark_gray, sizeof(RGBA));
+        break;
+    case 3:
+        memcpy(&cur_obj0_palette_colors[3], &cur_theme_black, sizeof(RGBA));
+        break;
+    default:
+        break;
+    }
+
+    obj_palette1[0] = read_obj10();
+    obj_palette1[1] = read_obj11();
+    obj_palette1[2] = read_obj12();
+    obj_palette1[3] = read_obj13();
+
+    switch (obj_palette1[0]) {
+    case 0:
+        memcpy(&cur_obj1_palette_colors[0], &cur_theme_white, sizeof(RGBA));
+        break;
+    case 1:
+        memcpy(&cur_obj1_palette_colors[0], &cur_theme_light_gray, sizeof(RGBA));
+        break;
+    case 2:
+        memcpy(&cur_obj1_palette_colors[0], &cur_theme_dark_gray, sizeof(RGBA));
+        break;
+    case 3:
+        memcpy(&cur_obj1_palette_colors[0], &cur_theme_black, sizeof(RGBA));
+        break;
+    default:
+        break;
+    }
+
+    switch (obj_palette1[1]) {
+    case 0:
+        memcpy(&cur_obj1_palette_colors[1], &cur_theme_white, sizeof(RGBA));
+        break;
+    case 1:
+        memcpy(&cur_obj1_palette_colors[1], &cur_theme_light_gray, sizeof(RGBA));
+        break;
+    case 2:
+        memcpy(&cur_obj1_palette_colors[1], &cur_theme_dark_gray, sizeof(RGBA));
+        break;
+    case 3:
+        memcpy(&cur_obj1_palette_colors[1], &cur_theme_black, sizeof(RGBA));
+        break;
+    default:
+        break;
+    }
+
+    switch (obj_palette1[2]) {
+    case 0:
+        memcpy(&cur_obj1_palette_colors[2], &cur_theme_white, sizeof(RGBA));
+        break;
+    case 1:
+        memcpy(&cur_obj1_palette_colors[2], &cur_theme_light_gray, sizeof(RGBA));
+        break;
+    case 2:
+        memcpy(&cur_obj1_palette_colors[2], &cur_theme_dark_gray, sizeof(RGBA));
+        break;
+    case 3:
+        memcpy(&cur_obj1_palette_colors[2], &cur_theme_black, sizeof(RGBA));
+        break;
+    default:
+        break;
+    }
+
+    switch (obj_palette1[3]) {
+    case 0:
+        memcpy(&cur_obj1_palette_colors[3], &cur_theme_white, sizeof(RGBA));
+        break;
+    case 1:
+        memcpy(&cur_obj1_palette_colors[3], &cur_theme_light_gray, sizeof(RGBA));
+        break;
+    case 2:
+        memcpy(&cur_obj1_palette_colors[3], &cur_theme_dark_gray, sizeof(RGBA));
+        break;
+    case 3:
+        memcpy(&cur_obj1_palette_colors[3], &cur_theme_black, sizeof(RGBA));
+        break;
+    default:
+        break;
+    }
+
+
+
 }
