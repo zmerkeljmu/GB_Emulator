@@ -1,5 +1,6 @@
-Refactor get background line to just use an array of length 160, basically just move logic from draw line to get bg line
-Window
 Sprites!
-scanline ppu
+	sprite palletes
+	please god do it in a smarter way than before
+
+
 memory leaks

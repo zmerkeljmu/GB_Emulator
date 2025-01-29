@@ -93,7 +93,7 @@ private:
 	void draw_line();
 	void get_bg_line(GLuint* bg_line, u8* bg_line_data);
 	void get_window_line(GLuint* window_line, u8* window_line_data);
-
+	void get_sprite_line(GLuint* sprite_line, u8* bg_line_data);
 	void calc_stat(u8 mode);
 
 	u8 cur_palette[4] = { 0, 0, 0, 0 };
@@ -131,7 +131,7 @@ public:
 		this->palette = false;
 	}
 
-	void set_flags(u8 flags) {
+	void set_flags(u8 y, u8 x, u8 tile, u8 flags) {
 		this->priority = flags & (1 << 7);
 		this->y_flip = flags & (1 << 6);
 		this->x_flip = flags & (1 << 5);

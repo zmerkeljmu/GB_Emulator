@@ -1,5 +1,6 @@
 #include "ppu.h"
 #include <iostream>
+#include <algorithm>
 /* 
 Make a state machine that cycles through the lines and 4 modes after the correct number of cycles
 Make a framebuffer that can be rendered. Maybe add video sync and/or double buffering
@@ -470,7 +471,6 @@ void PPU::get_window_line(GLuint* bg_line, u8* bg_line_data) {
 		printf("Window Y start is off-screen.\n");
 		return;
 	}
-    //aslpejfhase;ljkfh
     int window_line = win_counter;
     // Determine tile map and base address
     u16 map_area = (u8read_bit(lcdc::WIN_TILE_MAP, &lcdc)) ? MAP1_START : MAP0_START;
@@ -499,7 +499,8 @@ void PPU::get_window_line(GLuint* bg_line, u8* bg_line_data) {
                 continue; // Skip out-of-bounds pixels
 
             GLuint color = 0;
-            switch (tiles[tile_index].data[line_in_tile][pixel_index]) {
+			u8 pixel_value = tiles[tile_index].data[line_in_tile][pixel_index];
+            switch (pixel_value) {
             case WHITE:
                 memcpy(&color, &color0, sizeof(RGBA));
                 break;
@@ -519,12 +520,76 @@ void PPU::get_window_line(GLuint* bg_line, u8* bg_line_data) {
 
             // Overwrite the corresponding position in the background line
             bg_line[x_index] = color;
-            bg_line_data[x_index] = tiles[tile_index].data[line_in_tile][pixel_index];
+            bg_line_data[x_index] = pixel_value;
         }
     }
 	win_counter++;
 }
 
+void PPU::get_sprite_line(GLuint* sprite_line, u8* bg_line_data) {
+    int found_sprites = 0;
+    Sprite sprites[10] = {};
+    u16 address_offset = 0;
+    u8 sprite_size = 8;
+    if (u8read_bit(lcdc::OBJ_SIZE, &lcdc))
+        sprite_size = 16;
+
+    //find up to 10 sprites that are rendered on this line
+    while (found_sprites < 10 && address_offset < 40) {
+        Sprite sprite;
+        u8 y = read_oam_ram(OAM_START + address_offset);
+        u8 x = read_oam_ram(OAM_START + address_offset + 1);
+        u8 tile = read_oam_ram(OAM_START + address_offset + 2);
+        u8 flags = read_oam_ram(OAM_START + address_offset + 3);
+        
+        sprite.set_flags(y, x, tile, flags);
+
+        if (ly >= (sprite.y - 16) && ly <= (sprite.y - sprite_size)) {
+            sprites[found_sprites] = sprite;
+            found_sprites++;
+        }
+    }
+
+    std::sort(sprites, sprites + found_sprites, compare_sprites);
+    
+    for (int sprite_index = 0; sprite_index < found_sprites; sprite_index++) {
+        Sprite cur_sprite = sprites[sprite_index];
+        tile sprite_tile = {};
+        if (sprite_size == 16) {
+            //check if the upper or lower tile should be selected
+            if (ly >= (cur_sprite.y - 16) && ly < (cur_sprite.y - 8))
+                sprite_tile = read_tile(0x8000 + cur_sprite.tile * 16);
+            else
+                sprite_tile = read_tile(0x8000 + cur_sprite.tile * 16 + 16);
+        }
+        else {
+            sprite_tile = read_tile(0x8000 + cur_sprite.tile * 16);
+        }
+        
+        int tile_y = (ly - cur_sprite.y + 16) % 8;
+        
+        for (int tile_x = 0; tile_x < 8; tile_x++) {
+            int x_offset = cur_sprite.x - 8 + tile_x;
+            if (x_offset < 0)
+                continue;
+
+            if (!cur_sprite.priority) {
+                if (sprite_tile.data[tile_y][tile_x] != 0) {
+                
+                }
+            }
+        }
+
+
+
+    }
+
+
+}
+
+bool compare_sprites(const Sprite& a, const Sprite& b) {
+    return a.x > b.x; // Sort in descending order based on x
+}
 
 void PPU::draw_line() {
     if (ly > 143)
