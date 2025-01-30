@@ -120,6 +120,9 @@
     <ClCompile Include="tinyfiledialog\tinyfiledialogs.c">
       <Filter>Source Files\tinyfiledialog</Filter>
     </ClCompile>
+    <ClCompile Include="testmem.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cart.h">

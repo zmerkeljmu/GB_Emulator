@@ -3,7 +3,7 @@
 
 Timer::Timer(Mmu* memory) {
 	mem = memory;
-	counter = 0xab00;
+	counter = 0xabcc;
 	tima = 0x00;
 	tma = 0x00;
 	tac = 0xF8;
@@ -92,7 +92,7 @@ void Timer:: write_div(u8 byte) {
 	update_counter(0);
 }
 u8 Timer:: read_tac() {
-	return tac;
+	return 0b11111000 | tac;
 }
 void Timer::write_tac(u8 byte) {
 	bool prev = prev_and;

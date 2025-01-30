@@ -162,6 +162,7 @@
     <ClCompile Include="memory.cpp" />
     <ClCompile Include="misc_inst.cpp" />
     <ClCompile Include="ppu.cpp" />
+    <ClCompile Include="testmem.h" />
     <ClCompile Include="tests.cpp" />
     <ClCompile Include="tile.cpp" />
     <ClCompile Include="timer.cpp" />

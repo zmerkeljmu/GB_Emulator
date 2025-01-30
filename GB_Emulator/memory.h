@@ -11,10 +11,10 @@ class Timer;
 class Mmu {
 public:
 	Mmu(cartridge* cart, bool testing);
-	u8 read_byte(u16 address);
-	void write_byte(u16 address, u8 byte);
-	bool read_bit_reg(u16 address, u8 bit);
-	void set_bit_reg(u16 address, u8 bit, u8 value);
+	virtual u8 read_byte(u16 address);
+	virtual void write_byte(u16 address, u8 byte);
+	virtual bool read_bit_reg(u16 address, u8 bit);
+	virtual void set_bit_reg(u16 address, u8 bit, u8 value);
 	void set_ppu(PPU* ppu);
 	void set_cpu(Cpu* cpu);
 	void set_timer(Timer* timer);
@@ -31,3 +31,4 @@ private:
 	u8 dma = 0xFF;
 
 };
+

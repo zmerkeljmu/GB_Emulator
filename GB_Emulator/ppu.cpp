@@ -207,13 +207,12 @@ void PPU::write_wx(u8 byte) {
 
 
 u8 PPU::read_stat() {
-    return stat;
+    return 0b10000000 | stat;
 }
 //needs to be updated because register is mixed read/write
 void PPU::write_stat(u8 byte) {
     stat = byte;
 }
-
 
 //blocking needs to be implemented
 u8 PPU::read_vram(u16 address) {

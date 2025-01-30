@@ -97,7 +97,7 @@ public :
 
 private:
 	Instruction_list instruction_list;
-	u8 ie_reg = 0;
+	u8 ie_reg = 0b11100000;
 	u8 if_reg = 0xE1;
 };
 

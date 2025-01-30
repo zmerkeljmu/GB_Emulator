@@ -278,7 +278,7 @@ u8 Cpu::read_ie() {
 	return ie_reg;
 }
 u8 Cpu::read_if() {
-	return if_reg;
+	return 0b11100000 | if_reg;
 }
 
 void Cpu::write_ie(u8 byte) {
