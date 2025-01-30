@@ -107,7 +107,6 @@ void PPU::tick(u32 cycles) {
             exit(0);
             break;
         }
-        
     }
     else {
         cycles_remaining -= tcycles;
