@@ -421,6 +421,7 @@ void PPU::get_bg_line(GLuint* bg_line_160, u8* bg_line_data_160) {
             GLuint color = 0;
             u8 pixel_value = tiles[tile_index].data[line_in_tile][pixel_index];
             memcpy(&color, &cur_palette_colors[pixel_value], sizeof(RGBA));
+            bg_line_data[(tile_index * 8) + pixel_index] = pixel_value;
             bg_line[(tile_index * 8) + pixel_index] = color;
         }
     }
@@ -500,8 +501,12 @@ static bool compare_sprites(const Sprite& a, const Sprite& b) {
 void PPU::get_sprite_line(GLuint* sprite_line, u8* bg_line_data) {
     int found_sprites = 0;
     Sprite sprites[10] = {};
-    u16 address_offset = 0;
+    u8 address_offset = 0;
     u8 sprite_size = 8;
+    u8 sprite_wrote_at[160] = {};
+    for (int i = 0; i < 160; i++) {
+        sprite_wrote_at[i] = 254;
+    }
     if (u8read_bit(lcdc::OBJ_SIZE, &lcdc))
         sprite_size = 16;
 
@@ -517,7 +522,7 @@ void PPU::get_sprite_line(GLuint* sprite_line, u8* bg_line_data) {
         u8 tile = read_oam_ram(OAM_START + address_offset + 2);
         u8 flags = read_oam_ram(OAM_START + address_offset + 3);
         
-        sprite.set_flags(y, x, tile, flags);
+        sprite.set_flags(y, x, tile, flags, address_offset);
 
         if (ly >= (sprite.y - 16) && ly < (sprite.y - 16 + sprite_size)) {
             sprites[found_sprites] = sprite;
@@ -535,10 +540,19 @@ void PPU::get_sprite_line(GLuint* sprite_line, u8* bg_line_data) {
 
         if (sprite_size == 16) {
             //check if the upper or lower tile should be selected
-            if (ly >= (cur_sprite.y - 16) && ly < (cur_sprite.y - 8))
-                sprite_tile = read_tile(0x8000 + cur_sprite.tile * 16);
-            else
-                sprite_tile = read_tile(0x8000 + cur_sprite.tile * 16 + 16);
+            if (ly >= (cur_sprite.y - 16) && ly < (cur_sprite.y - 8)) {
+                if (!cur_sprite.y_flip)
+                    sprite_tile = read_tile(0x8000 + ((cur_sprite.tile & 0xFE) * 16));
+                else
+                    sprite_tile = read_tile(0x8000 + ((cur_sprite.tile | 0x01) * 16));
+            }
+            else {
+                if (!cur_sprite.y_flip)
+                    sprite_tile = read_tile(0x8000 + ((cur_sprite.tile | 0x01) * 16));
+                else
+                    sprite_tile = read_tile(0x8000 + ((cur_sprite.tile & 0xFE) * 16));
+
+            }
         }
         else {
             sprite_tile = read_tile(0x8000 + cur_sprite.tile * 16);
@@ -554,24 +568,60 @@ void PPU::get_sprite_line(GLuint* sprite_line, u8* bg_line_data) {
             if (x_offset < 0 || x_offset > 159)
                 continue;
             GLuint color = 0;
+            int tile_x_raw = tile_x;
+            int tile_y_raw = tile_y;
             //Priortized over the background
             if (!cur_sprite.priority) {
                 //if the tile is not transparent
+                if (cur_sprite.x_flip) {
+                    tile_x = 7 - tile_x;
+                }
+                if (cur_sprite.y_flip)
+                    tile_y = 7 - tile_y;
                 u8 pixel_data = sprite_tile.data[tile_y][tile_x];
                 if (pixel_data != 0) {
                     memcpy(&color, &palette[pixel_data], sizeof(RGBA));
-                    sprite_line[x_offset] = color;
+                    //trying to fix same tile sprite priority while not breaking lower x value sprites having priority
+                    if (sprite_wrote_at[x_offset] != 254) {
+                        Sprite sprite_wrote = sprites[sprite_wrote_at[x_offset]];
+                        if (sprite_wrote.x > cur_sprite.x || (cur_sprite.x == sprite_wrote.x && cur_sprite.oam_index < sprite_wrote.oam_index)) {
+                            sprite_line[x_offset] = color;
+                            sprite_wrote_at[x_offset] = sprite_index;
+                        }
+                    }
+                    else {
+                        sprite_line[x_offset] = color;
+                        sprite_wrote_at[x_offset] = sprite_index;
+                    }
                 }
             }
             //Only draw over background color 0
             else {
+                if (cur_sprite.x_flip) {
+                    tile_x = 7 - tile_x;
+                }
+                if (cur_sprite.y_flip)
+                    tile_y = 7 - tile_y;
                 u8 sprite_pixel = sprite_tile.data[tile_y][tile_x];
                 u8 bg_pixel = bg_line_data[x_offset];
                 if (bg_pixel == 0) {
                     memcpy(&color, &palette[sprite_pixel], sizeof(RGBA));
-                    sprite_line[x_offset] = color;
+                    if (sprite_wrote_at[x_offset] != 254) {
+                        Sprite sprite_wrote = sprites[sprite_wrote_at[x_offset]];
+                        if (sprite_wrote.x > cur_sprite.x || (cur_sprite.x == sprite_wrote.x && cur_sprite.oam_index < sprite_wrote.oam_index)) {
+                            sprite_line[x_offset] = color;
+                            sprite_wrote_at[x_offset] = sprite_index;
+                        }
+                    }
+                    else {
+                        sprite_line[x_offset] = color;
+                        sprite_wrote_at[x_offset] = sprite_index;
+
+                    }
                 }
             }
+            tile_x = tile_x_raw;
+            tile_y = tile_y_raw;
         }
     }
 }

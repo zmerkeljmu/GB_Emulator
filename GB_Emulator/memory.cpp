@@ -95,10 +95,13 @@ u8 Mmu::read_byte(u16 address) {
 void Mmu::write_byte(u16 address, u8 byte) {
 	if (address <= ROM_END)
 		return;
-	else if (address <= VRAM_END) {
+	else if (address <= VRAM_END && address >= VRAM_START) {
 		u8 state = ppu->get_state();
 		if (state != State::PIXEL_TRANSFER)
 			ppu->write_vram(address, byte);
+		else {
+			printf("write failed\n");
+		}
 	}
 	else if (address <= WRAM_END)
 		wram[address - WRAM_START] = byte;

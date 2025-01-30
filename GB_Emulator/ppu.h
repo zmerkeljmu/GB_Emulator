@@ -136,23 +136,25 @@ public:
 	bool y_flip;
 	bool x_flip;
 	bool palette;
+	u8 oam_index;
 
 	Sprite() {
 		this->y = 0;
 		this->x = 0;
 		this->tile = 0;
+		this->oam_index = 0;
 		this->priority = false;
 		this->y_flip = false;
 		this->x_flip = false;
 		this->palette = false;
 	}
 
-	void set_flags(u8 y, u8 x, u8 tile, u8 flags) {
+	void set_flags(u8 y, u8 x, u8 tile, u8 flags, u8 oam_index) {
 		this->priority = flags & (1 << 7);
 		this->y_flip = flags & (1 << 6);
 		this->x_flip = flags & (1 << 5);
 		this->palette = flags & (1 << 4);
-
+		this->oam_index = oam_index;
 		this->y = y;
 		this->x = x;
 		this->tile = tile;
