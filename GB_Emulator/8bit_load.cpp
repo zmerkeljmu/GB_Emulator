@@ -17,6 +17,7 @@ void ld_mem_to_reg(Cpu* cpu, u8* reg, u16 address) {
 }
 
 u8 ldbb_40(Cpu* cpu) {
+	//printf("done\n");
 	ld_reg_to_reg(cpu, &cpu->reg_b, &cpu->reg_b);
 	return 1;
 }

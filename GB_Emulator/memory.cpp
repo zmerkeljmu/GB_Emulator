@@ -48,7 +48,7 @@ u8 Mmu::read_byte(u16 address) {
 		else if (address == hardware_reg::TAC)
 			return timer->read_tac();
 		else if (address == hardware_reg::IF) {
-			printf("tima: %d\n", timer->read_tima());
+			//printf("tima: %d\n", timer->read_tima());
 			return cpu->read_if();
 		}
 		else if (address >= 0xFF10 && address <= 0xFF3F)

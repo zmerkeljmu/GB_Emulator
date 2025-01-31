@@ -180,6 +180,7 @@
     <ClInclude Include="misc_inst.h" />
     <ClCompile Include="stack.cpp" />
     <ClInclude Include="ppu.h" />
+    <ClInclude Include="tests.h" />
     <ClInclude Include="tile.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="tinyfiledialog\tinyfiledialogs.h" />

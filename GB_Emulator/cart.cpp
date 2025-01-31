@@ -36,7 +36,38 @@ cartridge::cartridge(std::string file_name) {
 }
 
 void cartridge::print_header_data() {
-	printf("Title: %s\n", header->title);
+    printf("Title: %s\n", header->title);
+    switch (header->cart_type) {
+        case 0x00: printf("ROM ONLY\n"); break;
+        case 0x01: printf("MBC1\n"); break;
+        case 0x02: printf("MBC1+RAM\n"); break;
+        case 0x03: printf("MBC1+RAM+BATTERY\n"); break;
+        case 0x05: printf("MBC2\n"); break;
+        case 0x06: printf("MBC2+BATTERY\n"); break;
+        case 0x08: printf("ROM+RAM\n"); break;
+        case 0x09: printf("ROM+RAM+BATTERY\n"); break;
+        case 0x0B: printf("MMM01\n"); break;
+        case 0x0C: printf("MMM01+RAM\n"); break;
+        case 0x0D: printf("MMM01+RAM+BATTERY\n"); break;
+        case 0x0F: printf("MBC3+TIMER+BATTERY\n"); break;
+        case 0x10: printf("MBC3+TIMER+RAM+BATTERY\n"); break;
+        case 0x11: printf("MBC3\n"); break;
+        case 0x12: printf("MBC3+RAM\n"); break;
+        case 0x13: printf("MBC3+RAM+BATTERY\n"); break;
+        case 0x19: printf("MBC5\n"); break;
+        case 0x1A: printf("MBC5+RAM\n"); break;
+        case 0x1B: printf("MBC5+RAM+BATTERY\n"); break;
+        case 0x1C: printf("MBC5+RUMBLE\n"); break;
+        case 0x1D: printf("MBC5+RUMBLE+RAM\n"); break;
+        case 0x1E: printf("MBC5+RUMBLE+RAM+BATTERY\n"); break;
+        case 0x20: printf("MBC6\n"); break;
+        case 0x22: printf("MBC7+SENSOR+RUMBLE+RAM+BATTERY\n"); break;
+        case 0xFC: printf("POCKET CAMERA\n"); break;
+        case 0xFD: printf("BANDAI TAMA5\n"); break;
+        case 0xFE: printf("HuC3\n"); break;
+        case 0xFF: printf("HuC1+RAM+BATTERY\n"); break;
+        default: printf("Unknown cartridge type\n"); break;
+    }
 }
 
 u8 cartridge::read_rom(u16 address) {

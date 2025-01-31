@@ -63,8 +63,13 @@ void PPU::tick(u32 cycles) {
     
     u32 tcycles = cycles * 4;
 
-    if (!mmu->read_bit_reg(hardware_reg::LCDC, lcdc::PPU_ENABLE))
+    //restart frame after renabled
+    if (!mmu->read_bit_reg(hardware_reg::LCDC, lcdc::PPU_ENABLE)) {
+        write_ppu_mode(0);
+        
+        cur_state = 0;
         return;
+    }
 
     if (!ppu_started) {
         ppu_started = true;
@@ -72,7 +77,6 @@ void PPU::tick(u32 cycles) {
     }
 
     if (tcycles >= cycles_remaining) {
-        cur_state = read_ppu_mode();
         u32 overflow = tcycles - cycles_remaining;
 
         switch (cur_state)
@@ -107,10 +111,13 @@ void PPU::tick(u32 cycles) {
             exit(0);
             break;
         }
+        cur_state = read_ppu_mode();
+
     }
     else {
         cycles_remaining -= tcycles;
     }
+
 }
 
 //tranistion to hblank
@@ -334,6 +341,7 @@ void PPU::scan_vram(GLuint* framebuffer) {
             row++;
         }
     }
+    delete[] tiles;
 }
 
 void PPU::render_bg_tilemap() {
@@ -376,6 +384,7 @@ void PPU::render_bg_tilemap() {
             row++;
         }
     }
+    delete[] tiles;
 }
 //get the line of the background
 void PPU::get_bg_line(GLuint* bg_line_160, u8* bg_line_data_160) {

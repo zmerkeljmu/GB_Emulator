@@ -7,6 +7,8 @@
 // - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
 // - Introduction, links and more at the top of imgui.cpp
 #include "tinyfiledialogs.h"
+#include "testmem.h"
+#include "tests.h"
 #include "iostream"
 #include "cart.h"
 #include "common.h"
@@ -73,6 +75,18 @@ void handle_input(SDL_Event* event, Cpu* cpu) {
 // Main code
 int main(int, char**)
 {
+   /*
+   
+    std::string acid1 = "C:\\Users\\David\\Documents\\CS\\EMU\\dmg-acid2.gb";
+
+    cartridge* cart1 = new cartridge(acid1);
+
+    TestMemory* mmu1 = new TestMemory(cart1, false);
+    Cpu* test_cpu = new Cpu(mmu1);
+    test_all_json(test_cpu);
+    
+   
+   */ 
     // Setup SDL
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0)
     {
@@ -252,6 +266,7 @@ int main(int, char**)
     
     cartridge* cart = new cartridge(game);
     char* title = cart->header->title;
+    cart->print_header_data();
     Mmu* mem = new Mmu(cart, true);
     Cpu* cpu = new Cpu(mem);
     cpu->debug = false;

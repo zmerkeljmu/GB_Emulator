@@ -6,7 +6,7 @@
 #include <vector>
 #include <sstream>
 #include <string>
-#include "gameboy.h"
+#include "tests.h"
 
 void test_json_individual(Cpu* cpu, int hexval, bool cb) {
     using json = nlohmann::json;
@@ -54,6 +54,7 @@ void test_json_individual(Cpu* cpu, int hexval, bool cb) {
         cpu->reg_h = el["initial"]["h"].get<int>();
         cpu->reg_l = el["initial"]["l"].get<int>();
         cpu->ime = el["initial"]["ime"].get<int>();
+        cpu->pending_ei = false;
         //reset ram
         for (int i = 0; i <= 0xFFFF; i++) {
             cpu->mem->write_byte(i, 0);
@@ -189,7 +190,7 @@ void test_json_individual(Cpu* cpu, int hexval, bool cb) {
 void test_all_json(Cpu* cpu) {
     //test all base instructions
 
-    for (int i = 0xFC; i < 256; i++) {
+    for (int i = 0xFB; i < 256; i++) {
         printf("%02x\n", i);
         if (i == 0x10 || i == 0x76) //skip halt and stop for now
             continue;

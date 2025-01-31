@@ -3,11 +3,13 @@
 
 Timer::Timer(Mmu* memory) {
 	mem = memory;
-	counter = 0xabcc;
+	counter = 0xabcc ;
 	tima = 0x00;
 	tma = 0x00;
 	tac = 0xF8;
 	tima_reload_cycle = false;
+	cycles_til_tima_irq = 0;
+	prev_and = false;
 }
 
 void Timer::tick(u8 cycles) {
@@ -48,7 +50,7 @@ void Timer::update_counter(u16 val) {
 		and_result = (counter >> 7) & 1;
 		break;
 	}
-	and_result &= ((tac & 4) >> 2);
+	and_result &= ((tac >> 2) & 1);
 	detect_edge(prev_and, and_result);
 	prev_and = and_result;
 
@@ -79,14 +81,14 @@ u8 Timer:: read_tma() {
 	return tma;
 }
 void Timer::write_tma(u8 byte) {
+	tma = byte;
 	if (tima_reload_cycle) {
 		tima = byte;
 	}
-	tma = byte;
 }
 
 u8 Timer:: read_div() {
-	return (counter >> 8) && 0xFF;
+	return (counter >> 8) & 0xFF;
 }
 void Timer:: write_div(u8 byte) {
 	update_counter(0);

@@ -30,11 +30,11 @@ Cpu::Cpu(Mmu* memory) {
 }
 
 int Cpu::step() {
-    bool set_ime = this->pending_ei;
     int cycles = 0;
+    bool set_ime = this->pending_ei;
 
     if (handle_interrupts())
-        cycles += 5;
+		cycles += 5;
 
     if (!halted) {
         //fetch	
@@ -44,15 +44,16 @@ int Cpu::step() {
         instruction inst = fetch_instruction();
         //decode
         //execute
+		if (set_ime) {
+			this->ime = true;
+			this->pending_ei = false;
+		}
         cycles += inst.function(this);
     } else {
         cycles += 1;
     }
 
-    if (set_ime) {
-        this->ime = true;
-        this->pending_ei = false;
-    }
+    
     return cycles;
 }
 

@@ -27,7 +27,7 @@ u8 cb_CB(Cpu* cpu) {
 }
 
 u8 ei_FB(Cpu* cpu) {
-	cpu->pending_ei = 1;
+	cpu->pending_ei = true;
 	return 1;
 }
 
