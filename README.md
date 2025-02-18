@@ -10,20 +10,34 @@ This project is a from-scratch emulator for the original Nintendo Game Boy. It i
 
 ---
 
+## Features
+
+The emulator includes several debugging features to help developers and enthusiasts understand the inner workings of the Game Boy:
+
+- **VRAM Viewer**:  
+  A real-time viewer for the Game Boy's Video RAM (VRAM), allowing you to inspect tiles, sprites, and other graphical data. This is useful for debugging graphical issues and understanding how the Game Boy renders graphics.
+
+- **Background Viewer**:  
+  A tool to visualize the Game Boy's background map in real-time. This helps in debugging how the background layers are constructed and rendered during gameplay.
+
+- **CPU State Display**:  
+  A live display of the CPU's registers, flags, and current instruction. This is invaluable for debugging CPU behavior and ensuring accurate emulation.
+---
+
 ## Controls
 
 The emulator uses the following keyboard controls:
 
-- **W** - Up
-- **A** - Left
-- **S** - Down
-- **D** - Right
+- ⬆️ `W` - Up  
+- ⬅️ `A` - Left  
+- ⬇️ `S` - Down  
+- ➡️ `D` - Right  
 
-- **J** - A button
-- **K** - B button
+- 🅹 `J` - A button  
+- 🅺 `K` - B button  
 
-- **Backspace** - Select
-- **Enter** - Start
+- ⏎ `Enter` - Start  
+- ⌫ `Backspace` - Select  
 
 ---
 
