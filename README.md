@@ -10,6 +10,23 @@ This project is a from-scratch emulator for the original Nintendo Game Boy. It i
 
 ---
 
+## Controls
+
+The emulator uses the following keyboard controls:
+
+- **W** - Up
+- **A** - Left
+- **S** - Down
+- **D** - Right
+
+- **J** - A button
+- **K** - B button
+
+- **Backspace** - Select
+- **Enter** - Start
+
+---
+
 ## Research Resources
 
 This project would not have been possible without the wealth of knowledge shared by the Game Boy development community. Below are some of the key resources I used for research:
@@ -75,23 +92,6 @@ I have several features and improvements planned for the emulator:
 - **MBC support**: Add support for games that use Memory Bank Controllers.
 - **Custom color palettes**: Allow users to customize the color palette for a personalized experience.
 - **Save games**: Implement support for saving and loading game progress.
-
----
-
-## Controls
-
-The emulator uses the following keyboard controls:
-
-- **W** - Up
-- **A** - Left
-- **S** - Down
-- **D** - Right
-
-- **J** - A button
-- **K** - B button
-
-- **Backspace** - Select
-- **Enter** - Start
 
 ---
 
