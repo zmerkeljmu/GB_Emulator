@@ -49,8 +49,8 @@ void handle_input(SDL_Event* event, Cpu* cpu) {
         case SDLK_a:        cpu->button_left = 1; std::cout << "a pressed\n"; break;
         case SDLK_w:        cpu->button_right = 1; std::cout << "w pressed\n"; break;
         case SDLK_s:        cpu->button_down = 1; std::cout << "s pressed\n"; break;
-        case SDLK_z:        cpu->button_a = 1; std::cout << "z pressed\n"; break;
-        case SDLK_x:        cpu->button_b = 1; std::cout << "x pressed\n"; break;
+        case SDLK_j:        cpu->button_a = 1; std::cout << "z pressed\n"; break;
+        case SDLK_k:        cpu->button_b = 1; std::cout << "x pressed\n"; break;
         case SDLK_BACKSPACE:cpu->button_select = 1; std::cout << "backspace pressed\n"; break;
         case SDLK_RETURN:   cpu->button_start = 1; std::cout << "return pressed\n"; break;
         }
@@ -63,8 +63,8 @@ void handle_input(SDL_Event* event, Cpu* cpu) {
         case SDLK_a:        cpu->button_left = 0; std::cout << "a released\n"; break;
         case SDLK_w:        cpu->button_right = 0; std::cout << "w released\n"; break;
         case SDLK_s:        cpu->button_down = 0; std::cout << "s released\n"; break;
-        case SDLK_z:        cpu->button_a = 0; std::cout << "z released\n"; break;
-        case SDLK_x:        cpu->button_b = 0; std::cout << "x released\n"; break;
+        case SDLK_j:        cpu->button_a = 0; std::cout << "z released\n"; break;
+        case SDLK_k:        cpu->button_b = 0; std::cout << "x released\n"; break;
         case SDLK_BACKSPACE:cpu->button_select = 0; std::cout << "backspace released\n"; break;
         case SDLK_RETURN:   cpu->button_start = 0; std::cout << "return released\n"; break;
         }
