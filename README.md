@@ -107,4 +107,4 @@ This project is open-source and available under the [MIT License](LICENSE). Feel
 
 ---
 
-Thank you for checking out my Game Boy Emulator project! I hope it demonstrates my passion for programming and my ability to tackle complex challenges.
+Thank you for checking out my Game Boy Emulator project!
