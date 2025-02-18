@@ -11,6 +11,7 @@ This project is a from-scratch emulator for the original Nintendo Game Boy. It i
 ---
 
 ## Features
+![Gameboy emulator with vram viewer, background viewer, and CPU state viewer visible](images/gbemu.png)
 
 The emulator includes several debugging features to help developers and enthusiasts understand the inner workings of the Game Boy:
 
