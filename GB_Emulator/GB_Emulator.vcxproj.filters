@@ -33,61 +33,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="cart.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="cpu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="emu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="memory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="8bit_arithmetic.cpp">
-      <Filter>Source Files\instructions</Filter>
-    </ClCompile>
-    <ClCompile Include="common.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="16bit_arithmetic.cpp">
-      <Filter>Source Files\instructions</Filter>
-    </ClCompile>
-    <ClCompile Include="8bit_load.cpp">
-      <Filter>Source Files\instructions</Filter>
-    </ClCompile>
-    <ClCompile Include="16bit_load.cpp">
-      <Filter>Source Files\instructions</Filter>
-    </ClCompile>
-    <ClCompile Include="stack.cpp">
-      <Filter>Source Files\instructions</Filter>
-    </ClCompile>
-    <ClCompile Include="bits.cpp">
-      <Filter>Source Files\instructions</Filter>
-    </ClCompile>
-    <ClCompile Include="misc_inst.cpp">
-      <Filter>Source Files\instructions</Filter>
-    </ClCompile>
-    <ClCompile Include="bit_flag.cpp">
-      <Filter>Source Files\CB</Filter>
-    </ClCompile>
-    <ClCompile Include="bit_shift.cpp">
-      <Filter>Source Files\CB</Filter>
-    </ClCompile>
-    <ClCompile Include="jump_subroutine.cpp">
-      <Filter>Source Files\instructions</Filter>
-    </ClCompile>
-    <ClCompile Include="tests.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="timer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="gameboy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ppu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
@@ -114,68 +60,68 @@
     <ClCompile Include="imgui\imgui_impl_opengl3.cpp">
       <Filter>Source Files\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="tile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="tinyfiledialog\tinyfiledialogs.c">
       <Filter>Source Files\tinyfiledialog</Filter>
     </ClCompile>
-    <ClCompile Include="testmem.h">
-      <Filter>Header Files</Filter>
+    <ClCompile Include="hardware\cpu\cpu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hardware\memory\cart.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hardware\memory\memory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hardware\gameboy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hardware\timer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hardware\ppu\ppu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hardware\ppu\tile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="testing\tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hardware\cpu\instructions\jump_subroutine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hardware\cpu\instructions\misc_inst.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hardware\cpu\instructions\stack.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hardware\cpu\instructions\8bit_arithmetic.cpp">
+      <Filter>Source Files\instructions</Filter>
+    </ClCompile>
+    <ClCompile Include="hardware\cpu\instructions\8bit_load.cpp">
+      <Filter>Source Files\instructions</Filter>
+    </ClCompile>
+    <ClCompile Include="hardware\cpu\instructions\16bit_arithmetic.cpp">
+      <Filter>Source Files\instructions</Filter>
+    </ClCompile>
+    <ClCompile Include="hardware\cpu\instructions\16bit_load.cpp">
+      <Filter>Source Files\instructions</Filter>
+    </ClCompile>
+    <ClCompile Include="hardware\cpu\instructions\bit_flag.cpp">
+      <Filter>Source Files\instructions</Filter>
+    </ClCompile>
+    <ClCompile Include="hardware\cpu\instructions\bit_shift.cpp">
+      <Filter>Source Files\instructions</Filter>
+    </ClCompile>
+    <ClCompile Include="hardware\cpu\instructions\bits.cpp">
+      <Filter>Source Files\instructions</Filter>
+    </ClCompile>
+    <ClCompile Include="const\common.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cart.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="common.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="cpu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="memory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="instruction.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="8bit_arithmetic.h">
-      <Filter>Source Files\instructions</Filter>
-    </ClInclude>
-    <ClInclude Include="16bit_arithmetic.h">
-      <Filter>Source Files\instructions</Filter>
-    </ClInclude>
-    <ClInclude Include="8bit_load.h">
-      <Filter>Source Files\instructions</Filter>
-    </ClInclude>
-    <ClInclude Include="16bit_load.h">
-      <Filter>Source Files\instructions</Filter>
-    </ClInclude>
-    <ClInclude Include="stack.h">
-      <Filter>Source Files\instructions</Filter>
-    </ClInclude>
-    <ClInclude Include="jump_subroutine.h">
-      <Filter>Source Files\instructions</Filter>
-    </ClInclude>
-    <ClInclude Include="bits.h">
-      <Filter>Source Files\instructions</Filter>
-    </ClInclude>
-    <ClInclude Include="bit_shift.h">
-      <Filter>Source Files\CB</Filter>
-    </ClInclude>
-    <ClInclude Include="bit_flag.h">
-      <Filter>Source Files\CB</Filter>
-    </ClInclude>
-    <ClInclude Include="misc_inst.h">
-      <Filter>Source Files\instructions</Filter>
-    </ClInclude>
-    <ClInclude Include="timer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="gameboy.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="imgui\imconfig.h">
       <Filter>Header Files\imgui</Filter>
     </ClInclude>
@@ -197,23 +143,80 @@
     <ClInclude Include="imgui\imstb_truetype.h">
       <Filter>Header Files\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="ppu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="imgui\imgui_impl_opengl3.h">
       <Filter>Header Files\imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imgui_impl_opengl3_loader.h">
       <Filter>Header Files\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="tile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="tinyfiledialog\tinyfiledialogs.h">
       <Filter>Header Files\tinyfiledialog</Filter>
+    </ClInclude>
+    <ClInclude Include="hardware\cpu\cpu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hardware\memory\cart.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hardware\memory\memory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hardware\memory\testmem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hardware\gameboy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hardware\timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hardware\ppu\ppu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hardware\ppu\tile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hardware\cpu\instructions\8bit_arithmetic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hardware\cpu\instructions\8bit_load.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hardware\cpu\instructions\16bit_arithmetic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hardware\cpu\instructions\16bit_load.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hardware\cpu\instructions\bit_flag.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hardware\cpu\instructions\bit_shift.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hardware\cpu\instructions\bits.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hardware\cpu\instructions\instruction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hardware\cpu\instructions\jump_subroutine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hardware\cpu\instructions\misc_inst.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hardware\cpu\instructions\stack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="const\common.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="todo.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="imgui.ini" />
   </ItemGroup>
 </Project>

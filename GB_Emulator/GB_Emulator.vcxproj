@@ -112,7 +112,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\zacha\OneDrive\Desktop\CS\EMU\nlohmann\include;C:\Users\David\Documents\CS\EMU\include\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\zacha\OneDrive\Desktop\CS\EMU\nlohmann\include;C:\Users\David\Documents\CS\EMU\include\include;$(ProjectDir)hardware\cpu\instructions\;$(ProjectDir)hardware\cpu\;$(ProjectDir)hardware\memory\;$(ProjectDir)hardware\ppu\;$(ProjectDir)hardware\;$(ProjectDir)const\;$(ProjectDir)testing\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,14 +138,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="16bit_arithmetic.cpp" />
-    <ClCompile Include="16bit_load.cpp" />
-    <ClCompile Include="8bit_arithmetic.cpp" />
-    <ClCompile Include="8bit_load.cpp" />
-    <ClCompile Include="bits.cpp" />
-    <ClCompile Include="bit_flag.cpp" />
-    <ClCompile Include="bit_shift.cpp" />
-    <ClCompile Include="gameboy.cpp" />
+    <ClCompile Include="const\common.cpp" />
+    <ClCompile Include="hardware\cpu\cpu.cpp" />
+    <ClCompile Include="hardware\cpu\instructions\16bit_arithmetic.cpp" />
+    <ClCompile Include="hardware\cpu\instructions\16bit_load.cpp" />
+    <ClCompile Include="hardware\cpu\instructions\8bit_arithmetic.cpp" />
+    <ClCompile Include="hardware\cpu\instructions\8bit_load.cpp" />
+    <ClCompile Include="hardware\cpu\instructions\bits.cpp" />
+    <ClCompile Include="hardware\cpu\instructions\bit_flag.cpp" />
+    <ClCompile Include="hardware\cpu\instructions\bit_shift.cpp" />
+    <ClCompile Include="hardware\cpu\instructions\jump_subroutine.cpp" />
+    <ClCompile Include="hardware\cpu\instructions\misc_inst.cpp" />
+    <ClCompile Include="hardware\cpu\instructions\stack.cpp" />
+    <ClCompile Include="hardware\gameboy.cpp" />
+    <ClCompile Include="hardware\memory\cart.cpp" />
+    <ClCompile Include="hardware\memory\memory.cpp" />
+    <ClCompile Include="hardware\ppu\ppu.cpp" />
+    <ClCompile Include="hardware\ppu\tile.cpp" />
+    <ClCompile Include="hardware\timer.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
@@ -153,21 +163,30 @@
     <ClCompile Include="imgui\imgui_impl_sdl2.cpp" />
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
-    <ClCompile Include="jump_subroutine.cpp" />
-    <ClCompile Include="cart.cpp" />
-    <ClCompile Include="common.cpp" />
-    <ClCompile Include="cpu.cpp" />
     <ClCompile Include="emu.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="memory.cpp" />
-    <ClCompile Include="misc_inst.cpp" />
-    <ClCompile Include="ppu.cpp" />
-    <ClCompile Include="testmem.h" />
-    <ClCompile Include="tests.cpp" />
-    <ClCompile Include="tile.cpp" />
-    <ClCompile Include="timer.cpp" />
+    <ClCompile Include="testing\tests.cpp" />
     <ClCompile Include="tinyfiledialog\tinyfiledialogs.c" />
-    <ClInclude Include="gameboy.h" />
+    <ClInclude Include="const\common.h" />
+    <ClInclude Include="hardware\cpu\cpu.h" />
+    <ClInclude Include="hardware\cpu\instructions\16bit_arithmetic.h" />
+    <ClInclude Include="hardware\cpu\instructions\16bit_load.h" />
+    <ClInclude Include="hardware\cpu\instructions\8bit_arithmetic.h" />
+    <ClInclude Include="hardware\cpu\instructions\8bit_load.h" />
+    <ClInclude Include="hardware\cpu\instructions\bits.h" />
+    <ClInclude Include="hardware\cpu\instructions\bit_flag.h" />
+    <ClInclude Include="hardware\cpu\instructions\bit_shift.h" />
+    <ClInclude Include="hardware\cpu\instructions\instruction.h" />
+    <ClInclude Include="hardware\cpu\instructions\jump_subroutine.h" />
+    <ClInclude Include="hardware\cpu\instructions\misc_inst.h" />
+    <ClInclude Include="hardware\cpu\instructions\stack.h" />
+    <ClInclude Include="hardware\gameboy.h" />
+    <ClInclude Include="hardware\memory\cart.h" />
+    <ClInclude Include="hardware\memory\memory.h" />
+    <ClInclude Include="hardware\memory\testmem.h" />
+    <ClInclude Include="hardware\ppu\ppu.h" />
+    <ClInclude Include="hardware\ppu\tile.h" />
+    <ClInclude Include="hardware\timer.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\imgui_impl_opengl3.h" />
@@ -177,32 +196,13 @@
     <ClInclude Include="imgui\imstb_rectpack.h" />
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
-    <ClInclude Include="misc_inst.h" />
-    <ClCompile Include="stack.cpp" />
-    <ClInclude Include="ppu.h" />
-    <ClInclude Include="tests.h" />
-    <ClInclude Include="tile.h" />
-    <ClInclude Include="timer.h" />
     <ClInclude Include="tinyfiledialog\tinyfiledialogs.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="16bit_arithmetic.h" />
-    <ClInclude Include="16bit_load.h" />
-    <ClInclude Include="8bit_arithmetic.h" />
-    <ClInclude Include="8bit_load.h" />
-    <ClInclude Include="bits.h" />
-    <ClInclude Include="bit_flag.h" />
-    <ClInclude Include="bit_shift.h" />
-    <ClInclude Include="jump_subroutine.h" />
-    <ClInclude Include="cart.h" />
-    <ClInclude Include="common.h" />
-    <ClInclude Include="cpu.h" />
-    <ClInclude Include="instruction.h" />
-    <ClInclude Include="memory.h" />
-    <ClInclude Include="stack.h" />
+    <Text Include="todo.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="todo.txt" />
+    <None Include="imgui.ini" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

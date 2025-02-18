@@ -1,20 +1,6 @@
 #include "ppu.h"
 #include <iostream>
 #include <algorithm>
-/* 
-Make a state machine that cycles through the lines and 4 modes after the correct number of cycles
-Make a framebuffer that can be rendered. Maybe add video sync and/or double buffering
-Render the tile data to that framebuffer
-Render the tile map
-Change the tile map rendering to go line by line and put it in the state machine
-Start using colors from the palette
-Add Y scroll. This should get the bootrom rendering properly
-Add X scroll
-If you haven't already, add VBLANK and STAT interrupts
-Now you can start using acid2 to test your rendering
-Add the window
-Add sprites
-*/
 
 /*
 Each frame is 70224 T cycles long and contains 154 scanlines.
@@ -45,11 +31,6 @@ My plan for PPU
 keep track of how many cycles are left in the current mode
 when ppu tick is called check state and then call function for that state
 in that state function subtract number of cycles from remaining cycles, if that number will hit 0 or go below 0 change state and run next state function (making sure to carry over the extra cycles from the previous state)
-
-want to make sure im understanding stat IRQ blocking right, do you basically just keep 2 internal flags 
-that at each point where there is a possible stat IRQ you check the STAT reg to see if that condition is
-enabled, if it is you set the old_stat flag to the value of cur_stat and set cur_stat to true and if it
-isn't you set cur_stat to false and only trigger an interrupt if (cur_stat && !old_stat)
 
 two internal flags prev_stat and cur_stat
 at every change of state calc stat and move cur_state to prev_state
