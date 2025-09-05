@@ -78,13 +78,6 @@ The emulator was validated against community-created test ROMs:
 - Only supports ROMs without a Memory Bank Controller (MBC).  
 - Audio is not implemented.  
 - Certain timing and PPU edge cases remain inaccurate.  
-
----
-
-## Contributing
-
-This project is archived and not under active development. Feedback and pull requests are welcome but may not receive immediate attention.  
-
 ---
 
 ## License
