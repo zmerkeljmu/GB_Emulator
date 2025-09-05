@@ -1,125 +1,92 @@
 # Game Boy Emulator
 
-Welcome to my Game Boy Emulator project! This is a passion project that I developed to deepen my understanding of low-level programming, hardware emulation, and software development. While still in development, the emulator is already capable of running some original Game Boy ROMs, such as *Tetris*. I am actively working to improve its accuracy and add new features.
+**A from-scratch Game Boy emulator written in C++ — educational, debugger-focused, and capable of running select original ROMs (e.g., *Tetris*).**  
+**Status:** _Archived — no longer under active development._
 
 ---
 
-## Description
+## Overview
 
-This project is a from-scratch emulator for the original Nintendo Game Boy. It is designed to replicate the behavior of the Game Boy's hardware, including the CPU, memory, and graphics. The emulator is written in C++ and uses external libraries for rendering and user interface. While it is far from perfect, it serves as a testament to my dedication to learning and problem-solving.
+This project replicates core components of the original Nintendo Game Boy, including the CPU, memory, and graphics pipeline. It was developed as a learning exercise in low-level programming, hardware emulation, and systems development.  
+
+While not intended as a production-quality emulator, it runs several commercial ROMs and includes a suite of debugging tools designed to make the inner workings of the Game Boy easier to explore and understand.  
 
 ---
 
 ## Features
+![Gameboy emulator running Tetris](images/gbemu_tetris.png)  
 ![Gameboy emulator with vram viewer, background viewer, and CPU state viewer visible](images/gbemu.png)
 
-The emulator includes several debugging features to help developers and enthusiasts understand the inner workings of the Game Boy:
+- **VRAM Viewer**  
+  Inspect tiles, sprites, and other graphical data in real time.  
 
-- **VRAM Viewer**:  
-  A real-time viewer for the Game Boy's Video RAM (VRAM), allowing you to inspect tiles, sprites, and other graphical data. This is useful for debugging graphical issues and understanding how the Game Boy renders graphics.
+- **Background Viewer**  
+  Visualize the Game Boy’s background map as it is rendered.  
 
-- **Background Viewer**:  
-  A tool to visualize the Game Boy's background map in real-time. This helps in debugging how the background layers are constructed and rendered during gameplay.
+- **CPU State Display**  
+  Monitor registers, flags, and the current instruction live.  
 
-- **CPU State Display**:  
-  A live display of the CPU's registers, flags, and current instruction. This is invaluable for debugging CPU behavior and ensuring accurate emulation.
 ---
 
 ## Controls
 
-The emulator uses the following keyboard controls:
+- ⬆️ `W` – Up  
+- ⬅️ `A` – Left  
+- ⬇️ `S` – Down  
+- ➡️ `D` – Right  
 
-- ⬆️ `W` - Up  
-- ⬅️ `A` - Left  
-- ⬇️ `S` - Down  
-- ➡️ `D` - Right  
+- 🅹 `J` – A button  
+- 🅺 `K` – B button  
 
-- 🅹 `J` - A button  
-- 🅺 `K` - B button  
-
-- ⏎ `Enter` - Start  
-- ⌫ `Backspace` - Select  
+- ⏎ `Enter` – Start  
+- ⌫ `Backspace` – Select  
 
 ---
 
 ## Research Resources
 
-This project would not have been possible without the wealth of knowledge shared by the Game Boy development community. Below are some of the key resources I used for research:
+This project would not have been possible without the documentation and community resources surrounding Game Boy development:  
 
 - **[Game Boy CPU (SM83) Manual](https://rgbds.gbdev.io/docs/v0.9.0/gbz80.7)**  
-  The official documentation for the Game Boy's CPU, which helped me understand the instruction set and behavior of the SM83 processor.
-
 - **[Pan Docs](https://gbdev.io/pandocs/Specifications.html)**  
-  A comprehensive technical reference for the Game Boy hardware, covering everything from memory mapping to graphics rendering.
-
 - **[The Ultimate Game Boy Talk (YouTube)](https://www.youtube.com/watch?v=HyzD8pNlpwI&ab_channel=media.ccc.de)**  
-  An excellent presentation by Michael Steil that dives deep into the architecture and inner workings of the Game Boy.
 
 ---
 
 ## Tests
 
-This project would not have been possible without the incredible resources and test ROMs created by the Game Boy development community. Special thanks to the following:
+The emulator was validated against community-created test ROMs:  
 
-- **Blargg Test Roms**: [https://github.com/retrio/gb-test-roms](https://github.com/retrio/gb-test-roms)  
-  Used for testing CPU accuracy and timing.
-
-- **Mooneye Test Roms**: [https://github.com/Gekkio/mooneye-test-suite](https://github.com/Gekkio/mooneye-test-suite)  
-  Used for testing hardware behavior and edge cases.
-
+- **Blargg Test ROMs**: [https://github.com/retrio/gb-test-roms](https://github.com/retrio/gb-test-roms)  
+- **Mooneye Test Suite**: [https://github.com/Gekkio/mooneye-test-suite](https://github.com/Gekkio/mooneye-test-suite)  
 - **CPU Instruction JSON Tests**: [https://github.com/SingleStepTests/sm83](https://github.com/SingleStepTests/sm83)  
-  Used for validating the correctness of CPU instructions.
 
 ---
 
 ## External Libraries Used
 
-This project leverages the following external libraries:
-
 - **Dear ImGui**: [https://github.com/ocornut/imgui](https://github.com/ocornut/imgui)  
-  Used for creating a customizable debug interface.
-
 - **tinyfiledialogs**: [https://sourceforge.net/projects/tinyfiledialogs/](https://sourceforge.net/projects/tinyfiledialogs/)  
-  Used for simple file dialogs to load ROMs.
-
-- **OpenGL**  
-  Used for rendering the Game Boy's graphics.
-
-- **SDL2**  
-  Used for window management and input handling.
+- **OpenGL** – graphics rendering  
+- **SDL2** – window management and input  
 
 ---
 
-## Known Issues
+## Known Limitations
 
-The emulator is still a work in progress, and there are several known issues:
-
-- **Timer accuracy**: The timer implementation is not fully accurate and may cause timing-related issues in some games.
-- **MBC support**: Currently, the emulator only supports games that do not use a Memory Bank Controller (MBC). I plan to implement MBC support in the future.
-- **Audio support**: Audio is not currently implemented. While I may add it later, it is not a priority at the moment.
-
----
-
-## Future Plans
-
-I have several features and improvements planned for the emulator:
-
-- **MBC support**: Add support for games that use Memory Bank Controllers.
-- **Custom color palettes**: Allow users to customize the color palette for a personalized experience.
-- **Save games**: Implement support for saving and loading game progress.
+- Timer implementation is not cycle-accurate.  
+- Only supports ROMs without a Memory Bank Controller (MBC).  
+- Audio is not implemented.  
+- Certain timing and PPU edge cases remain inaccurate.  
 
 ---
 
 ## Contributing
 
-This project is a personal endeavor, but I welcome feedback and suggestions! If you have any ideas or find bugs, feel free to open an issue or reach out to me.
+This project is archived and not under active development. Feedback and pull requests are welcome but may not receive immediate attention.  
 
 ---
 
 ## License
 
-This project is open-source and available under the [MIT License](LICENSE). Feel free to use, modify, and distribute it as you see fit.
-
----
-
-Thank you for checking out my Game Boy Emulator project!
+This project is released under the [MIT License](LICENSE).  
