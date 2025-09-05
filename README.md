@@ -1,6 +1,6 @@
 # Game Boy Emulator
 
-**A from-scratch Game Boy emulator written in C++ — educational, debugger-focused, and capable of running select original ROMs (e.g., *Tetris*).**  
+**From-scratch Game Boy emulator in C++ featuring debugger tools and support for running select original ROMs such as Tetris.**  
 **Status:** _Archived — no longer under active development._
 
 ---
