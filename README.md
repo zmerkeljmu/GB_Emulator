@@ -14,7 +14,7 @@ While not intended as a production-quality emulator, it runs several commercial 
 ---
 
 ## Features
-![Gameboy emulator running Tetris](images/gbemu_tetris.png)  
+
 ![Gameboy emulator with vram viewer, background viewer, and CPU state viewer visible](images/gbemu.png)
 
 - **VRAM Viewer**  
@@ -30,16 +30,16 @@ While not intended as a production-quality emulator, it runs several commercial 
 
 ## Controls
 
-- ⬆️ `W` – Up  
-- ⬅️ `A` – Left  
-- ⬇️ `S` – Down  
-- ➡️ `D` – Right  
+-  `W` – Up  
+-  `A` – Left  
+-  `S` – Down  
+-  `D` – Right  
 
-- 🅹 `J` – A button  
-- 🅺 `K` – B button  
+-  `J` – A button  
+-  `K` – B button  
 
-- ⏎ `Enter` – Start  
-- ⌫ `Backspace` – Select  
+- `Enter` – Start  
+- `Backspace` – Select  
 
 ---
 
